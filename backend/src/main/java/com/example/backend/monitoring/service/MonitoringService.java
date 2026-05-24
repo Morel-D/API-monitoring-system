@@ -1,5 +1,7 @@
 package com.example.backend.monitoring.service;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,20 +28,62 @@ public class MonitoringService {
 
         MonitoringModel save = repository.save(model);
 
-        return new MonitoringMapper(
-            save.id, 
-            save.name, 
-            save.url, 
-            save.status, 
-            save.lastCheckedAt, 
-            save.createdAt
-        );
+        return convertToMapper(save);
     }
 
     // GET Service ----------------------------------------
+    public List<MonitoringMapper> getAll() {
+        List<MonitoringModel> models = repository.findAll();
+            return models.stream().map(this::convertToMapper).collect(Collectors.toList());
+    }
 
     // GET Service {id} -----------------------------------
 
+    public MonitoringMapper getById(Long id) {
+        MonitoringModel model = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
+
+        return convertToMapper(model);
+    }
+
+    // PUT Service {id} --------------------------------
+
+    public MonitoringMapper update(Long id, MonitoringDTO dto){
+        MonitoringModel existing = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
+
+        existing.setName(dto.getName());
+        existing.setUrl(dto.getUrl());
+
+        MonitoringModel updates = repository.save(existing);
+
+        return convertToMapper(updates);
+    }
+
+
     // DELETE Service {id} --------------------------------
+    
+    public void delete(Long id) {
+        if(!repository.existsById(id)){
+            throw new IllegalArgumentException("Monitoring_not_found");
+        }
+        repository.deleteById(id);
+    }
+
+
+
+
+
+
+    // Helper method to convert Model -> mapper
+    private MonitoringMapper convertToMapper(MonitoringModel model) {
+        return new MonitoringMapper(
+            model.getId(),
+            model.getName(),
+            model.getUrl(),
+            model.getStatus(), 
+            model.getLastCheckedAt(), 
+            model.getCreatedAt()
+        );
+    }
 
 }
+
