@@ -1,33 +1,28 @@
-package com.example.backend.monitoring.model;
+package com.example.backend.features.monitoring.mapper;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.CreationTimestamp;
+public class MonitoringMapper {
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-@Entity
-@Table(name = "monitoring")
-public class MonitoringModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
-
     public String name;
     public String url;
     public String status;
-
     public LocalDateTime lastCheckedAt;
-
-    @CreationTimestamp
     public LocalDateTime createdAt;
 
     
+    public MonitoringMapper(Long id, String name, String url, String status, LocalDateTime lastCheckedAt,
+            LocalDateTime createdAt) {
+        this.id = id;
+        this.name = name;
+        this.url = url;
+        this.status = status;
+        this.lastCheckedAt = lastCheckedAt;
+        this.createdAt = createdAt;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -64,4 +59,5 @@ public class MonitoringModel {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
 }

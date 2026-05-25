@@ -1,4 +1,4 @@
-package com.example.backend.monitoring.controller;
+package com.example.backend.features.monitoring.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.backend.monitoring.dto.MonitoringDTO;
-import com.example.backend.monitoring.mapper.MonitoringMapper;
-import com.example.backend.monitoring.service.MonitoringService;
+import com.example.backend.features.monitoring.dto.MonitoringDTO;
+import com.example.backend.features.monitoring.mapper.MonitoringMapper;
+import com.example.backend.features.monitoring.service.MonitoringService;
 import com.example.backend.shared.api.ApiResponse;
 
 import jakarta.validation.Valid;

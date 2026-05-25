@@ -1,4 +1,4 @@
-package com.example.backend.monitoring.service;
+package com.example.backend.features.monitoring.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.monitoring.dto.MonitoringDTO;
-import com.example.backend.monitoring.mapper.MonitoringMapper;
-import com.example.backend.monitoring.model.MonitoringModel;
-import com.example.backend.monitoring.repository.MonitoringRepository;
+import com.example.backend.features.monitoring.dto.MonitoringDTO;
+import com.example.backend.features.monitoring.mapper.MonitoringMapper;
+import com.example.backend.features.monitoring.model.MonitoringModel;
+import com.example.backend.features.monitoring.repository.MonitoringRepository;
 
 @Service
 public class MonitoringService {

@@ -1,4 +1,4 @@
-package com.example.backend.monitoring.dto;
+package com.example.backend.features.monitoring.dto;
 
 import jakarta.validation.constraints.NotNull;
 
