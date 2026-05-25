@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.backend.features.HealthCheckLog.mapper.HealthCheckLogMapper;
+import com.example.backend.features.HealthCheckLog.service.HealthCheckService;
 import com.example.backend.features.monitoring.dto.MonitoringDTO;
 import com.example.backend.features.monitoring.mapper.MonitoringMapper;
 import com.example.backend.features.monitoring.service.MonitoringService;
@@ -27,6 +29,9 @@ public class MonitoringController {
 
     @Autowired
     private MonitoringService monitoringService;
+
+    @Autowired
+    private HealthCheckService healthCheckService;
 
     // CREATE ----------------------------------
     @PostMapping
@@ -92,6 +97,20 @@ public class MonitoringController {
         return new ApiResponse<Void>(
                 true,
                 null,
+                "done",
+                null,
+                LocalDateTime.now()
+        );
+    }
+
+    // MANUAL HEALTH CHECK --------------------
+    @PostMapping("/{id}/check")
+    public ApiResponse<HealthCheckLogMapper> check(@PathVariable Long id) {
+        HealthCheckLogMapper response = healthCheckService.performHealthCheck(id);
+
+        return new ApiResponse<>(
+                true,
+                response,
                 "done",
                 null,
                 LocalDateTime.now()
