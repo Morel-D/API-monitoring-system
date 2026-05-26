@@ -1,54 +1,18 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  
-  font-family: "Montserrat", sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  /* font-size: 14px; */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css');
 
-  color-scheme: light dark;
-  color: #161616;
-  background-color: #FFFFFF;
+*, *::before, *::after { box-sizing: border-box; }
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #0e1014;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-}
-
-/* globals.css (or wherever you keep global styles) */
-@keyframes popup-fade-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
-}
-@keyframes popup-fade-out {
-  from { opacity: 1; transform: translateY(0)    scale(1); }
-  to   { opacity: 0; transform: translateY(8px) scale(0.98); }
-}
-
-@keyframes backdrop-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes backdrop-fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-/* helper classes used by component */
-.animate-popup-in  { animation: popup-fade-in  220ms cubic-bezier(.16,.84,.54,1) forwards; }
-.animate-popup-out { animation: popup-fade-out 180ms cubic-bezier(.4,.0,.2,1) forwards; }
-
-.animate-backdrop-in  { animation: backdrop-fade-in  220ms linear forwards; }
-.animate-backdrop-out { animation: backdrop-fade-out 180ms linear forwards; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #1e222a; border-radius: 2px; }
