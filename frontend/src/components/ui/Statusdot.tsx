@@ -1,13 +1,13 @@
-import type { ServiceStatus } from "../../types";
 
-const colors: Record<ServiceStatus, string> = {
-  UP:      'bg-emerald-400',
-  DOWN:    'bg-red-400',
-  SLOW:    'bg-amber-400',
-  UNKNOWN: 'bg-zinc-500',
+
+const colors: Record<string, string> = {
+  'true':      'bg-emerald-400',
+  'false':    'bg-red-400',
+  // SLOW:    'bg-amber-400',
+  // UNKNOWN: 'bg-zinc-500',
 };
 
-export function StatusDot({ status, pulse = false }: { status: ServiceStatus; pulse?: boolean }) {
+export function StatusDot({ status, pulse = false }: { status: string; pulse?: boolean }) {
   return (
     <span className="relative inline-flex items-center justify-center w-2.5 h-2.5">
       {pulse && status === 'UP' && (

@@ -55,7 +55,9 @@ const Modal: React.FC<ModalProps> = ({
       <div
         onClick={onClose}
         className={`absolute inset-0 transition-opacity duration-300 ease-in-out ${
-          isOpen ? "bg-gray-900/50 opacity-100 pointer-events-auto" : "opacity-0"
+          isOpen 
+            ? "bg-black/70 opacity-100 pointer-events-auto" 
+            : "opacity-0 pointer-events-none"
         }`}
       />
 
@@ -66,19 +68,22 @@ const Modal: React.FC<ModalProps> = ({
         ref={modalRef}
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className={`absolute top-4 bottom-4 right-4 ${widthClass} ${className} transform transition-all duration-500 ease-in-out pointer-events-auto bg-white rounded shadow-2xl ${
-          isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
-        }`}
+        className={`absolute top-4 bottom-4 right-4 ${widthClass} ${className} 
+          transform transition-all duration-500 ease-in-out pointer-events-auto 
+          bg-[#0e1014] border border-white/[0.08] rounded-xl shadow-2xl
+          ${isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"}`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
           {title && (
-            <div className="p-4 sm:p-6  flex items-start justify-between">
-              <div className="text-xl sm:text-2xl font-semibold text-gray-900">{title}</div>
+            <div className="p-5 sm:p-6 flex items-start justify-between border-b border-white/[0.07]">
+              <div className="text-xl sm:text-2xl font-semibold text-[#e8eaf0]">
+                {title}
+              </div>
               <button
                 aria-label="Close modal"
                 onClick={onClose}
-                className="text-gray-500 hover:text-gray-900 text-2xl"
+                className="text-[#6b7280] hover:text-[#e8eaf0] text-2xl leading-none transition-colors"
               >
                 ✕
               </button>
@@ -86,11 +91,13 @@ const Modal: React.FC<ModalProps> = ({
           )}
 
           {/* Body */}
-          <div className="flex-1 overflow-y-auto px-4 sm:px-6">{children}</div>
+          <div className="flex-1 overflow-y-auto p-5 sm:p-6 text-[#e8eaf0]">
+            {children}
+          </div>
 
           {/* Footer */}
           {footer && (
-            <div className="p-4 sm:p-6 border-t border-gray-200 flex justify-end space-x-3">
+            <div className="p-5 sm:p-6 border-t border-white/[0.07] flex justify-end gap-3">
               {footer}
             </div>
           )}

@@ -34,7 +34,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ color, text, status }) => {
   const resolved = status ? statusMap[status] : { color: color ?? "gray", text: text ?? "" };
 
   return (
-    <span className={`px-2 py-1 text-xs font-medium rounded ${getColorClasses(resolved.color as BadgeColor)}`}>
+    <span className={`px-2 py-1 text-center mx-1 text-xs font-medium rounded ${getColorClasses(resolved.color as BadgeColor)}`}>
       {resolved.text}
     </span>
   );
