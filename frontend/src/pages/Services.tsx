@@ -6,6 +6,7 @@ import StatusBadge from '../components/ui/status-badge';
 import Modal from '../components/common/modal';
 import { ServiceForm } from '../features/service/components/Serviceform';
 import { servicesApi } from '../features/service/ServiceApi';
+import { ServiceLogsModal } from '../features/service/components/ServiceLogsModal';
 
 type Filter = 'ALL' | ServiceStatus;
 
@@ -25,6 +26,7 @@ export function ServicesPage() {
   const [filter, setFilter]     = useState<Filter>('ALL');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing]   = useState<Service | null>(null);
+  const [logsTarget, setLogsTarget] = useState<Service | null>(null);
 
   // ── Fetch ─────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
@@ -207,6 +209,17 @@ export function ServicesPage() {
                   </span>
 
                   <div className="flex items-center gap-0">
+
+                      <button
+                        onClick={() => setLogsTarget(svc)}
+                        className="text-[10px] text-[#6b7280] border border-none px-2 py-1 rounded hover:text-blue-400 transition-all"
+                        aria-label="View logs"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                        </svg>
+                      </button>
+
                     <button
                       onClick={() => openEdit(svc)}
                       className="text-[10px] text-[#6b7280]  border border-none px-2 py-1 rounded hover:text-[#e8eaf0] transition-all"
@@ -232,6 +245,11 @@ export function ServicesPage() {
           </div>
         )}
       </div>
+
+      <ServiceLogsModal
+        service={logsTarget}
+        onClose={() => setLogsTarget(null)}
+      />
 
       {/* Modal */}
       <Modal

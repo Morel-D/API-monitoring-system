@@ -3,6 +3,9 @@ package com.example.backend.features.HealthCheckLog.service;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +50,7 @@ public class HealthCheckService {
             log.setResponseTime(Duration.ofMillis(responseTimeMs));
             log.setSucess(true);
             log.setStatus("true");
-            log.setMessage("service_reachable");
+            log.setMessage("UP");
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             long responseTimeMs = System.currentTimeMillis() - startTime;
             
@@ -55,7 +58,7 @@ public class HealthCheckService {
             log.setResponseTime(Duration.ofMillis(responseTimeMs));
             log.setSucess(false);
             log.setStatus("true");
-            log.setMessage(e.getMessage());
+            log.setMessage("DOWN");
         } catch (Exception e){
             long responseTimeMs = System.currentTimeMillis() - startTime;
 
@@ -63,7 +66,7 @@ public class HealthCheckService {
             log.setResponseTime(Duration.ofMillis(responseTimeMs));
             log.setSucess(false);
             log.setStatus("false");
-            log.setMessage("Connection failed: " + e.getMessage());
+            log.setMessage("DOWN");
         }
 
         HealthCheckLogModel saveLog = repository.save(log);
@@ -75,7 +78,26 @@ public class HealthCheckService {
         return convertToHealthCheckMapper(saveLog);
     }
 
-    
+    public List<HealthCheckLogMapper> getAllChecks() {
+        List<HealthCheckLogModel> models = repository.findAll();
+        return models.stream().map(this::convertToHealthCheckMapper).collect(Collectors.toList());
+    }
+
+        public List<HealthCheckLogMapper> getByServiceID(Long serviceId) {
+                if (serviceId == null) {
+                    throw new IllegalArgumentException("Service ID cannot be null");
+                }
+
+                List<HealthCheckLogModel> logs = repository.findByMonitoringIdOrderByCheckedAtDesc(serviceId);
+                
+                if (logs.isEmpty()) {
+                    return Collections.emptyList();
+                }
+
+                return logs.stream()
+                        .map(this::convertToHealthCheckMapper)
+                        .collect(Collectors.toList());
+            }
 
     private HealthCheckLogMapper convertToHealthCheckMapper(HealthCheckLogModel log) {
         return new HealthCheckLogMapper(
