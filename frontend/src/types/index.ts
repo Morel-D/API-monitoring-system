@@ -4,14 +4,24 @@ export interface Service {
   id: number;
   name: string;
   url: string;
-  status: string;        // comes as "true" / "false" from the API
+  status: string;             // "true" | "false"
+  autoCheckEnable: boolean;
+  checkInterval: number;      // minutes
   lastCheckedAt: string | null;
   createdAt: string;
+
 }
 
 export interface ServiceFormValues {
   name: string;
   url: string;
+  autoCheckEnable: boolean;
+  checkInterval: number;
+}
+
+export interface AutoCheck {
+  enabled: boolean;
+  intervalMinutes: number;
 }
 
 // Normalise the raw API status string to our UI status

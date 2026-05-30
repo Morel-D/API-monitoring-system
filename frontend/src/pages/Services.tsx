@@ -7,6 +7,7 @@ import Modal from '../components/common/modal';
 import { ServiceForm } from '../features/service/components/Serviceform';
 import { servicesApi } from '../features/service/ServiceApi';
 import { ServiceLogsModal } from '../features/service/components/ServiceLogsModal';
+import { AutoCheckModal } from '../features/service/components/Autocheckmodal';
 
 type Filter = 'ALL' | ServiceStatus;
 
@@ -26,6 +27,7 @@ export function ServicesPage() {
   const [filter, setFilter]     = useState<Filter>('ALL');
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing]   = useState<Service | null>(null);
+  const [autoCheckTarget, setAutoCheckTarget] = useState<Service | null>(null);
   const [logsTarget, setLogsTarget] = useState<Service | null>(null);
 
   // ── Fetch ─────────────────────────────────────────────────────
@@ -128,7 +130,7 @@ export function ServicesPage() {
 
         {/* Column headers */}
         {services.length > 0 && (
-          <div className="grid px-4 mb-2 gap-3" style={{ gridTemplateColumns: COLS }}>
+          <div className="grid px-6 mb-2 gap-3" style={{ gridTemplateColumns: COLS }}>
             {['', 'Service', 'Status', 'Last checked', 'Actions'].map((h) => (
               <span key={h} className="text-[9px] uppercase tracking-[0.1em] text-[#6b7280]">{h}</span>
             ))}
@@ -189,7 +191,7 @@ export function ServicesPage() {
               return (
                 <div
                   key={svc.id}
-                  className="bg-[#16191f] border border-white/[0.07] rounded-lg px-4 py-3.5 grid items-center gap-3 hover:border-white/[0.14] transition-colors"
+                  className="bg-[#16191f] border border-white/[0.07] rounded-lg px-6.5 py-3.5 grid items-center gap-3 hover:border-white/[0.14] transition-colors"
                   style={{ gridTemplateColumns: COLS }}
                 >
                   <StatusDot status={svc.status.toString()} pulse />
@@ -210,15 +212,16 @@ export function ServicesPage() {
 
                   <div className="flex items-center gap-0">
 
-                      <button
-                        onClick={() => setLogsTarget(svc)}
-                        className="text-[10px] text-[#6b7280] border border-none px-2 py-1 rounded hover:text-blue-400 transition-all"
-                        aria-label="View logs"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
-                        </svg>
-                      </button>
+                    <button
+                      onClick={() => setLogsTarget(svc)}
+                      className="text-[10px] text-[#6b7280] border border-none px-2 py-1 rounded hover:text-blue-400 transition-all"
+                      aria-label="View logs"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+                      </svg>
+                    </button>
+
 
                     <button
                       onClick={() => openEdit(svc)}
@@ -229,6 +232,23 @@ export function ServicesPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                     </svg>
                     </button>
+
+
+                    <button
+                        onClick={() => setAutoCheckTarget(svc)}
+                        className={`text-[10px] border border-none px-2 py-1 rounded transition-all ${
+                          svc.autoCheckEnable
+                            ? 'text-blue-400 hover:text-blue-300'
+                            : 'text-[#6b7280] hover:text-[#e8eaf0]'
+                        }`}
+                        aria-label="Toggle auto-check"
+                        title={svc.autoCheckEnable ? 'Auto-check on — click to configure' : 'Auto-check off — click to enable'}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+                    </button>
+
                     <button
                       onClick={() => handleDelete(svc.id)}
                       className="text-[10px] text-[#6b7280] border border-none px-2 py-1 rounded hover:text-red-400 hover:border-red-500/30 transition-all"
@@ -249,6 +269,13 @@ export function ServicesPage() {
       <ServiceLogsModal
         service={logsTarget}
         onClose={() => setLogsTarget(null)}
+      />
+
+      {/* Auto-check modal */}
+      <AutoCheckModal
+        service={autoCheckTarget}
+        onClose={() => setAutoCheckTarget(null)}
+        onSaved={fetchAll}
       />
 
       {/* Modal */}

@@ -1,3 +1,5 @@
+import type { Service } from ".";
+
 export interface HealthLog {
   id: number;
   statusCode: number;
@@ -6,14 +8,7 @@ export interface HealthLog {
   message: string;
   status: string;         // "true" | "false"
   checkedAt: string;
-  service: {
-    id: number;
-    name: string;
-    url: string;
-    status: string;
-    lastCheckedAt: string | null;
-    createdAt: string;
-  };
+  service: Service;
 }
 
 // Parse "PT4.336S" → "4.34s"

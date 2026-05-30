@@ -123,7 +123,7 @@ public class MonitoringController {
     public ApiResponse<HealthCheckLogMapper> toggleAutoCheck(@PathVariable Long id,
             @RequestBody AutoCheckRequest request){
                 try {
-                    monitoringService.enableAutoCheck(id, request.getEnabled(), request.getIntervalMinutes());
+                    monitoringService.enableAutoCheck(id, request.isEnabled(), request.getIntervalMinutes());
 
                     return new ApiResponse<>(
                         true, 
@@ -138,7 +138,7 @@ public class MonitoringController {
                         false,
                         null,
                         "server_error",
-                        null,
+                        e.getMessage(),
                         LocalDateTime.now()
                     );
             }

@@ -7,8 +7,8 @@ import lombok.Data;
 @Data
 public class AutoCheckRequest {
     @NotNull(message = "Enabled field is required")
-    private Boolean enabled;
+    private boolean enabled;
 
     @Min(value = 1, message = "Interval must be at least 1 minute")
-    private Integer intervalMinutes;
+    private int intervalMinutes;
 }

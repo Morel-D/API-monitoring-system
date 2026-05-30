@@ -1,4 +1,4 @@
-import type { Service, ServiceFormValues } from "../../types";
+import type { AutoCheck, Service, ServiceFormValues } from "../../types";
 import apiClient from "../../utils/Axios";
 
 
@@ -31,5 +31,9 @@ export const servicesApi = {
   check: async (id: number) => {
     const { data } = await apiClient.post(`/api/service/${id}/check`);
     return data.data;
+  },
+
+  updateAutoCheck: async (id: number, dto: AutoCheck): Promise<void> => {
+     await apiClient.put(`/api/service/${id}/autocheck`, dto);
   },
 };
