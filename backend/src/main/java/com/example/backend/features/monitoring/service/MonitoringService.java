@@ -1,4 +1,5 @@
 package com.example.backend.features.monitoring.service;
+import com.example.backend.features.monitoring.controller.MonitoringController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,8 +15,12 @@ import com.example.backend.features.monitoring.repository.MonitoringRepository;
 @Service
 public class MonitoringService {
 
-    @Autowired
-    private MonitoringRepository repository;
+    
+    private final MonitoringRepository repository;
+
+    public MonitoringService(MonitoringRepository repository) {
+        this.repository = repository;
+    }
 
     // POST Service ---------------------------------------
     public MonitoringMapper create(MonitoringDTO dto){
@@ -68,8 +73,23 @@ public class MonitoringService {
         repository.deleteById(id);
     }
 
+    public List<MonitoringModel> getServiceDueForCheck() {
+        return repository.findServicesDueForCheck();
+    }
 
+    public void enableAutoCheck(Long serviceId, boolean enabled, Integer intervalMinutes) {
+        MonitoringModel service = repository.findById(serviceId).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
 
+        service.setAutoCheckEnable(enabled);
+
+        if(intervalMinutes != null && intervalMinutes > 0){
+            service.setCheckInterval(intervalMinutes);
+        }else if (enabled){
+            service.setCheckInterval(1);
+        }
+        repository.save(service);
+
+    }
 
 
 
@@ -80,6 +100,8 @@ public class MonitoringService {
             model.getName(),
             model.getUrl(),
             model.getStatus(), 
+            model.isAutoCheckEnable(),
+            model.getCheckInterval(),
             model.getLastCheckedAt(), 
             model.getCreatedAt()
         );

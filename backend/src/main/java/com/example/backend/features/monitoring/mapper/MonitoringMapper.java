@@ -8,16 +8,20 @@ public class MonitoringMapper {
     public String name;
     public String url;
     public String status;
+    public boolean autoCheckEnable;
+    public int checkInterval;
     public LocalDateTime lastCheckedAt;
     public LocalDateTime createdAt;
 
     
-    public MonitoringMapper(Long id, String name, String url, String status, LocalDateTime lastCheckedAt,
+    public MonitoringMapper(Long id, String name, String url, String status, boolean autoCheckEnable, int checkInterval, LocalDateTime lastCheckedAt,
             LocalDateTime createdAt) {
         this.id = id;
         this.name = name;
         this.url = url;
         this.status = status;
+        this.autoCheckEnable = autoCheckEnable;
+        this.checkInterval = checkInterval;
         this.lastCheckedAt = lastCheckedAt;
         this.createdAt = createdAt;
     }
@@ -46,6 +50,18 @@ public class MonitoringMapper {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+        public boolean isAutoCheckEnable() {
+        return autoCheckEnable;
+    }
+    public void setAutoCheckEnable(boolean autoCheckEnable) {
+        this.autoCheckEnable = autoCheckEnable;
+    }
+    public int getCheckInterval() {
+        return checkInterval;
+    }
+    public void setCheckInterval(int checkInterval) {
+        this.checkInterval = checkInterval;
     }
     public LocalDateTime getLastCheckedAt() {
         return lastCheckedAt;

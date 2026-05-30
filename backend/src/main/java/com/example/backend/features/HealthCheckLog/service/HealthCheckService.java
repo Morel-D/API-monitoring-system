@@ -73,6 +73,7 @@ public class HealthCheckService {
 
         ///
         monitoring.setLastCheckedAt(LocalDateTime.now());
+        monitoring.setStatus(log.getStatus());
         serviceRepository.save(monitoring);
 
         return convertToHealthCheckMapper(saveLog);
@@ -83,7 +84,7 @@ public class HealthCheckService {
         return models.stream().map(this::convertToHealthCheckMapper).collect(Collectors.toList());
     }
 
-        public List<HealthCheckLogMapper> getByServiceID(Long serviceId) {
+    public List<HealthCheckLogMapper> getByServiceID(Long serviceId) {
                 if (serviceId == null) {
                     throw new IllegalArgumentException("Service ID cannot be null");
                 }
@@ -98,6 +99,9 @@ public class HealthCheckService {
                         .map(this::convertToHealthCheckMapper)
                         .collect(Collectors.toList());
             }
+
+
+    // Helpers......................................
 
     private HealthCheckLogMapper convertToHealthCheckMapper(HealthCheckLogModel log) {
         return new HealthCheckLogMapper(

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.features.HealthCheckLog.mapper.HealthCheckLogMapper;
 import com.example.backend.features.HealthCheckLog.service.HealthCheckService;
+import com.example.backend.features.monitoring.dto.AutoCheckRequest;
 import com.example.backend.features.monitoring.dto.MonitoringDTO;
 import com.example.backend.features.monitoring.mapper.MonitoringMapper;
 import com.example.backend.features.monitoring.service.MonitoringService;
@@ -117,6 +118,31 @@ public class MonitoringController {
         );
     }
 
+    // ENABLE / DISABLE AUTO CHECK FOR ONE SERVICE --------
+    @PutMapping("/{id}/autocheck")
+    public ApiResponse<HealthCheckLogMapper> toggleAutoCheck(@PathVariable Long id,
+            @RequestBody AutoCheckRequest request){
+                try {
+                    monitoringService.enableAutoCheck(id, request.getEnabled(), request.getIntervalMinutes());
 
+                    return new ApiResponse<>(
+                        true, 
+                        null, 
+                        "done",
+                        null, 
+                        LocalDateTime.now()
+                        );
+                
+                }catch (Exception e) {
+                    return new ApiResponse<>(
+                        false,
+                        null,
+                        "server_error",
+                        null,
+                        LocalDateTime.now()
+                    );
+            }
+
+        }
     
 }

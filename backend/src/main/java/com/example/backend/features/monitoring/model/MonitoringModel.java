@@ -22,6 +22,8 @@ public class MonitoringModel {
     public String url;
     public String status;
 
+    private boolean autoCheckEnabled = false;
+    private int checkInterval = 1;
     public LocalDateTime lastCheckedAt;
 
     @CreationTimestamp
@@ -51,6 +53,19 @@ public class MonitoringModel {
     }
     public void setStatus(String status) {
         this.status = status;
+    }
+    
+    public boolean isAutoCheckEnable() {
+        return autoCheckEnabled;
+    }
+    public void setAutoCheckEnable(boolean autoCheckEnabled) {
+        this.autoCheckEnabled = autoCheckEnabled;
+    }
+    public int getCheckInterval() {
+        return checkInterval;
+    }
+    public void setCheckInterval(int checkInterval) {
+        this.checkInterval = checkInterval;
     }
     public LocalDateTime getLastCheckedAt() {
         return lastCheckedAt;
