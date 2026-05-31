@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.features.HealthCheckLog.mapper.HealthCheckLogMapper;
 import com.example.backend.features.HealthCheckLog.service.HealthCheckService;
+import com.example.backend.features.dashbaord.dto.DashbaordMetricsDTO;
 import com.example.backend.features.monitoring.dto.AutoCheckRequest;
 import com.example.backend.features.monitoring.dto.MonitoringDTO;
 import com.example.backend.features.monitoring.mapper.MonitoringMapper;
@@ -144,5 +145,29 @@ public class MonitoringController {
             }
 
         }
+
+    
+    @GetMapping("/dashboard/metrics")
+    public ApiResponse<DashbaordMetricsDTO> getMetrics() {
+        try {
+            DashbaordMetricsDTO metrics = monitoringService.getDashbaordMetrics();
+            
+            return new ApiResponse<>(
+                true,
+                metrics,
+                "done",
+                null,
+                LocalDateTime.now()
+            );
+        } catch (Exception e) {
+            return new ApiResponse<>(
+                false,
+                null,
+                "error",
+                null,
+                LocalDateTime.now()
+            );
+        }
+    }
     
 }

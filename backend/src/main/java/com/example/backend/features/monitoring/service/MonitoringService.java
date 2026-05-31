@@ -1,4 +1,8 @@
 package com.example.backend.features.monitoring.service;
+import com.example.backend.features.HealthCheckLog.model.HealthCheckLogModel;
+import com.example.backend.features.HealthCheckLog.repository.HealthCheckRepository;
+import com.example.backend.features.dashbaord.dto.DashbaordMetricsDTO;
+import com.example.backend.features.dashbaord.dto.DashboardServiceDTO;
 import com.example.backend.features.monitoring.controller.MonitoringController;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,9 +21,11 @@ public class MonitoringService {
 
     
     private final MonitoringRepository repository;
+    private final HealthCheckRepository healthCheckRepository;
 
-    public MonitoringService(MonitoringRepository repository) {
+    public MonitoringService(MonitoringRepository repository, HealthCheckRepository healthCheckRepository) {
         this.repository = repository;
+        this.healthCheckRepository = healthCheckRepository;
     }
 
     // POST Service ---------------------------------------
@@ -63,7 +69,6 @@ public class MonitoringService {
         return convertToMapper(updates);
     }
 
-
     // DELETE Service {id} --------------------------------
     
     public void delete(Long id) {
@@ -73,6 +78,8 @@ public class MonitoringService {
         repository.deleteById(id);
     }
 
+
+    // ..............
     public List<MonitoringModel> getServiceDueForCheck() {
         return repository.findServicesDueForCheck();
     }
@@ -92,8 +99,36 @@ public class MonitoringService {
     }
 
 
+    public DashbaordMetricsDTO getDashbaordMetrics() {
+        List<MonitoringModel> allService = repository.findAll();
 
-    // Helper method to convert Model -> mapper
+        long total = allService.size();
+        long online = allService.stream().filter(s -> "true".equalsIgnoreCase(s.getStatus())).count();
+        long offline = allService.stream().filter(s -> "false".equalsIgnoreCase(s.getStatus())).count();
+
+        double avgResponseTime = calaculateAverageResponseTime();
+
+        // Get recnt services (first 3 only)
+        List<DashboardServiceDTO> recentService = allService.stream().limit(3).map(this::convertToDashboardServiceDTO).toList();
+
+        return new DashbaordMetricsDTO(total, online, offline, avgResponseTime, recentService);
+    }
+
+
+    // Helper method ---------------------------------------------------
+
+    private double calaculateAverageResponseTime(){
+        List<HealthCheckLogModel> latestCheck = healthCheckRepository.findLatestCheckPerService();
+
+        if(latestCheck.isEmpty()){
+            return 0.0;
+        }
+
+        double sum = latestCheck.stream().mapToLong(log -> log.getResponseTime() != null ? log.getResponseTime().toMillis() : 0).sum();
+
+        return sum/latestCheck.size();
+    }
+
     private MonitoringMapper convertToMapper(MonitoringModel model) {
         return new MonitoringMapper(
             model.getId(),
@@ -107,5 +142,28 @@ public class MonitoringService {
         );
     }
 
+    private DashboardServiceDTO convertToDashboardServiceDTO(MonitoringModel model) {
+
+        HealthCheckLogModel latestLog = healthCheckRepository.findTopByMonitoringIdOrderByCheckedAtDesc(model.getId()).orElse(null);
+
+        String lastResponse = "-";
+        String lastChecked = "Never";
+
+        if(latestLog != null){
+            lastResponse = latestLog.getResponseTime() != null ? latestLog.getResponseTime().toMillis() + " ms" : "-";
+
+            lastChecked = latestLog.getCheckedAt() != null ? latestLog.getCheckedAt().toString() : "Never";
+        }
+
+
+        return new DashboardServiceDTO(
+            model.getId(), 
+            model.getName(),
+            model.getUrl(), 
+            model.getStatus(), 
+            lastResponse,
+            lastChecked
+        );
+    }
 }
 
