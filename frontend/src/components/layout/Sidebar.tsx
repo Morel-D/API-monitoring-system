@@ -34,11 +34,6 @@ export function Sidebar() {
           >
             <i className={`ti ${item.icon} text-[15px] flex-shrink-0`} aria-hidden />
             <span className="flex-1">{item.label}</span>
-            {item.badge && (
-              <span className="bg-red-500 text-white text-[9px] font-semibold px-1.5 py-px rounded-full">
-                {item.badge}
-              </span>
-            )}
           </NavLink>
         ))}
       </nav>

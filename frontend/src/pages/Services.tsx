@@ -8,6 +8,7 @@ import { ServiceForm } from '../features/service/components/Serviceform';
 import { servicesApi } from '../features/service/ServiceApi';
 import { ServiceLogsModal } from '../features/service/components/ServiceLogsModal';
 import { AutoCheckModal } from '../features/service/components/Autocheckmodal';
+import DeleteConfirmModal from '../components/common/deleteConfirmModal';
 
 type Filter = 'ALL' | ServiceStatus;
 
@@ -29,6 +30,20 @@ export function ServicesPage() {
   const [editing, setEditing]   = useState<Service | null>(null);
   const [autoCheckTarget, setAutoCheckTarget] = useState<Service | null>(null);
   const [logsTarget, setLogsTarget] = useState<Service | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Service | null>(null);
+  const [deleting, setDeleting]         = useState(false);
+
+const handleDelete = async () => {
+  if (!deleteTarget) return;
+  setDeleting(true);
+  try {
+    await servicesApi.delete(deleteTarget.id);
+    setServices((prev) => prev.filter((s) => s.id !== deleteTarget.id));
+    setDeleteTarget(null);
+  } finally {
+    setDeleting(false);
+  }
+};
 
   // ── Fetch ─────────────────────────────────────────────────────
   const fetchAll = useCallback(async () => {
@@ -73,12 +88,6 @@ export function ServicesPage() {
     closeModal();
   };
 
-  const handleDelete = (id: number) => {
-    if (!confirm('Remove this service?')) return;
-    servicesApi.delete(id).then(() =>
-      setServices((prev) => prev.filter((s) => s.id !== id))
-    );
-  };
 
   // ── Render ────────────────────────────────────────────────────
   return (
@@ -250,7 +259,7 @@ export function ServicesPage() {
                     </button>
 
                     <button
-                      onClick={() => handleDelete(svc.id)}
+                      onClick={() => setDeleteTarget(svc)}
                       className="text-[10px] text-[#6b7280] border border-none px-2 py-1 rounded hover:text-red-400 hover:border-red-500/30 transition-all"
                       aria-label="Delete"
                     >
@@ -291,6 +300,16 @@ export function ServicesPage() {
           onCancel={closeModal}
         />
       </Modal>
+
+
+      <DeleteConfirmModal
+        isOpen={deleteTarget !== null}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={handleDelete}
+        loading={deleting}
+        title={`Delete "${deleteTarget?.name}"`}
+        description="This service and all its health logs will be permanently removed."
+      />
     </div>
   );
 }

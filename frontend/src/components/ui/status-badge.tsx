@@ -9,32 +9,31 @@ interface StatusBadgeProps {
   status?: ServiceStatus;
 }
 
-const statusMap: Record<ServiceStatus, { color: BadgeColor; text: string }> = {
-  UP:      { color: "green",  text: "UP"      },
-  DOWN:    { color: "red",    text: "DOWN"    },
-  SLOW:    { color: "yellow", text: "SLOW"    },
-  UNKNOWN: { color: "gray",   text: "UNKNOWN" },
+const statusMap: Record<ServiceStatus, { classes: string; text: string }> = {
+  UP:      { classes: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', text: 'UP'      },
+  DOWN:    { classes: 'bg-red-500/10 text-red-400 border-red-500/20',             text: 'DOWN'    },
+  SLOW:    { classes: 'bg-amber-500/10 text-amber-400 border-amber-500/20',       text: 'SLOW'    },
+  UNKNOWN: { classes: 'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',          text: 'UNKNOWN' },
 };
 
-const getColorClasses = (color: BadgeColor) => {
-  switch (color) {
-    case "green":  return "bg-green-100 text-green-700";
-    case "red":    return "bg-red-100 text-red-700";
-    case "yellow": return "bg-yellow-100 text-yellow-700";
-    case "blue":   return "bg-blue-100 text-blue-700";
-    case "gray":   return "bg-gray-100 text-gray-700";
-    case "accent": return "bg-accent/20 text-accent";
-    case "purple": return "bg-purple-100 text-purple-700";
-    case "orange": return "bg-orange-100 text-orange-700";
-    default:       return "bg-gray-100 text-gray-700";
-  }
+const colorMap: Record<string, string> = {
+  green:  'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+  red:    'bg-red-500/10 text-red-400 border-red-500/20',
+  yellow: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  blue:   'bg-blue-500/10 text-blue-400 border-blue-500/20',
+  gray:   'bg-zinc-500/10 text-zinc-400 border-zinc-500/20',
+  accent: 'bg-accent/10 text-accent border-accent/20',
+  purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+  orange: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
 };
 
 const StatusBadge: React.FC<StatusBadgeProps> = ({ color, text, status }) => {
-  const resolved = status ? statusMap[status] : { color: color ?? "gray", text: text ?? "" };
+  const resolved = status
+    ? statusMap[status]
+    : { classes: colorMap[color ?? 'gray'] ?? colorMap.gray, text: text ?? '' };
 
   return (
-    <span className={`px-2 py-1 text-center mx-1 text-xs font-medium rounded ${getColorClasses(resolved.color as BadgeColor)}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium border ${resolved.classes}`}>
       {resolved.text}
     </span>
   );
