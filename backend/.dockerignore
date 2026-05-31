@@ -1,0 +1,10 @@
+target/
+*.log
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+docker-compose.yml
+src/main/resources/application-dev.yml
+src/main/resources/application-test.yml
