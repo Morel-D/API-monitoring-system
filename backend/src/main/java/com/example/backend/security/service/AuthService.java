@@ -1,6 +1,5 @@
 package com.example.backend.security.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,33 +9,43 @@ import com.example.backend.security.dto.AuthResponse;
 import com.example.backend.security.dto.LoginRequest;
 import com.example.backend.security.dto.RegisterRequest;
 import com.example.backend.security.jwt.JwtService;
+import com.example.backend.security.model.User;
 
-// import lombok.RequiredArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 
 @Service
-// @RequiredArgsConstructor
+@RequiredArgsConstructor
 public class AuthService {
 
-    @Autowired
-    private  UserService userService;
-    private  JwtService jwtService;
-    private  PasswordEncoder passwordEncoder;
-    private  AuthenticationManager authenticationManager;
+    private final  UserService userService;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
 
     public AuthResponse register(RegisterRequest request) {
-        // Create user
+
+        if (userService.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email_already_exists");
+        }
+
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+
         var user = userService.createUser(
             request.getName(),
             request.getEmail(),
-            passwordEncoder.encode(request.getPassword())
+            encodedPassword
         );
+
+        System.out.println("CREATED USER --> "+ user);
+
 
         String token = jwtService.generateToken(user.getEmail());
 
         return new AuthResponse(token, "Bearer");
     }
-
 
     public AuthResponse login(LoginRequest request) {
         authenticationManager.authenticate(
@@ -52,4 +61,7 @@ public class AuthService {
         return new AuthResponse(token, "Bearer");
     }
 
+    public User getCurrentUser(String email) {
+        return userService.findByEmail(email);
+    }
 }
