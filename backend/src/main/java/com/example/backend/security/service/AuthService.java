@@ -30,6 +30,10 @@ public class AuthService {
             throw new IllegalArgumentException("Email_already_exists");
         }
 
+        if (request.getPassword().length() < 6) {
+            throw new IllegalArgumentException("Password_to_week");
+        }
+
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
 
@@ -40,7 +44,6 @@ public class AuthService {
         );
 
         System.out.println("CREATED USER --> "+ user);
-
 
         String token = jwtService.generateToken(user.getEmail());
 
