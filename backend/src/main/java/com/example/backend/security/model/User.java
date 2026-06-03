@@ -11,7 +11,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.backend.features.monitoring.model.MonitoringModel;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -40,6 +43,9 @@ public class User implements UserDetails {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MonitoringModel> services = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

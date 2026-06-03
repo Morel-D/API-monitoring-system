@@ -15,6 +15,7 @@ import com.example.backend.features.monitoring.dto.MonitoringDTO;
 import com.example.backend.features.monitoring.mapper.MonitoringMapper;
 import com.example.backend.features.monitoring.model.MonitoringModel;
 import com.example.backend.features.monitoring.repository.MonitoringRepository;
+import com.example.backend.security.model.User;
 
 @Service
 public class MonitoringService {
@@ -29,12 +30,13 @@ public class MonitoringService {
     }
 
     // POST Service ---------------------------------------
-    public MonitoringMapper create(MonitoringDTO dto){
+    public MonitoringMapper create(MonitoringDTO dto, User currentUser){
 
         MonitoringModel model = new MonitoringModel();
         model.setName(dto.getName());
         model.setUrl(dto.getUrl());
         model.setStatus("true");
+        model.setUser(currentUser);
         model.setLastCheckedAt(LocalDateTime.now());
 
         MonitoringModel save = repository.save(model);

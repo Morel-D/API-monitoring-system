@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import com.example.backend.features.monitoring.dto.AutoCheckRequest;
 import com.example.backend.features.monitoring.dto.MonitoringDTO;
 import com.example.backend.features.monitoring.mapper.MonitoringMapper;
 import com.example.backend.features.monitoring.service.MonitoringService;
+import com.example.backend.security.model.User;
 import com.example.backend.shared.api.ApiResponse;
 
 import jakarta.validation.Valid;
@@ -37,8 +39,12 @@ public class MonitoringController {
 
     // CREATE ----------------------------------
     @PostMapping
-    public ApiResponse<MonitoringMapper> create(@Valid @RequestBody MonitoringDTO dto){
-        MonitoringMapper response = monitoringService.create(dto);
+    public ApiResponse<MonitoringMapper> create(@Valid @RequestBody MonitoringDTO dto, Authentication authentication){
+
+        User currentUser = (User) authentication.getPrincipal();
+        System.out.println("User --> "+ currentUser);
+
+        MonitoringMapper response = monitoringService.create(dto, currentUser);
         return new ApiResponse<MonitoringMapper>(
             true, 
             response, 
