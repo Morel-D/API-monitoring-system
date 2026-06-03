@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
     const message = err.response?.data?.message ?? err.message ?? 'Unknown error';
     if (message === 'token_error' || err.response?.status === 401) {
       localStorage.removeItem(TOKEN_KEY);
-      window.location.href = '/login';
+      // window.location.href = '/login';
     }
     return Promise.reject(new Error(message));
   }

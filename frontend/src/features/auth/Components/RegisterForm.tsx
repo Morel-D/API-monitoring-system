@@ -5,7 +5,7 @@ export function RegisterForm() {
   const { values, errors, serverError, loading, set, submit } = useRegister();
 
   return (
-    <form onSubmit={submit} noValidate className="space-y-4">
+    <div className="space-y-4">
 
       <AuthField label="Name" error={errors.name}>
         <AuthInput
@@ -40,16 +40,15 @@ export function RegisterForm() {
         />
       </AuthField>
 
-      {serverError && <AuthError message={serverError} />}
-
       <AuthSubmitButton
         loading={loading}
+        onClick={submit}
         label="Create account"
         loadingLabel="Creating account…"
       />
 
       <AuthLink text="Already have an account?" linkText="Sign in" to="/login" />
 
-    </form>
+    </div>
   );
 }

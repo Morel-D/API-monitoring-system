@@ -38,6 +38,7 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
         try {
           const auth = await authApi.register(dto);
+          console.log("Auth --> ", auth);
           set({ token: auth.token, loading: false });
         } catch (e) {
           set({ loading: false });

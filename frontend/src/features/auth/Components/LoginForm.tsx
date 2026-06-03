@@ -5,7 +5,7 @@ export function LoginForm() {
   const { values, errors, serverError, loading, set, submit } = useLogin();
 
   return (
-    <form onSubmit={submit} noValidate className="space-y-4">
+    <div className="space-y-4">
 
       <AuthField label="Email" error={errors.email}>
         <AuthInput
@@ -29,16 +29,15 @@ export function LoginForm() {
         />
       </AuthField>
 
-      {serverError && <AuthError message={serverError} />}
-
       <AuthSubmitButton
         loading={loading}
+        onClick={submit}
         label="Sign in"
         loadingLabel="Signing in…"
       />
 
       <AuthLink text="Don't have an account?" linkText="Create one" to="/register" />
 
-    </form>
+    </div>
   );
 }

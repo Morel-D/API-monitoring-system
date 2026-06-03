@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../AuthStore';
 import { formatAuthError, validateRegister, type FormErrors, type RegisterFields } from '../validation';
+import { toastError, toastSuccess } from '../../../utils/widgets/toast/Toaststore';
 
 
 export function useRegister() {
@@ -25,9 +26,12 @@ export function useRegister() {
 
     try {
       await register(values);
+      toastSuccess('done');
       navigate('/', { replace: true });
     } catch (err) {
-      setServerError(formatAuthError((err as Error).message));
+      const msg = (err as Error).message;
+      setServerError(formatAuthError(msg));
+      toastError(msg);
     }
   };
 
