@@ -3,12 +3,10 @@ import com.example.backend.features.HealthCheckLog.model.HealthCheckLogModel;
 import com.example.backend.features.HealthCheckLog.repository.HealthCheckRepository;
 import com.example.backend.features.dashbaord.dto.DashbaordMetricsDTO;
 import com.example.backend.features.dashbaord.dto.DashboardServiceDTO;
-import com.example.backend.features.monitoring.controller.MonitoringController;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.features.monitoring.dto.MonitoringDTO;
@@ -50,18 +48,26 @@ public class MonitoringService {
             return models.stream().map(this::convertToMapper).collect(Collectors.toList());
     }
 
+    // GET By USER Service ----------------------------------------
+    public List<MonitoringMapper> getAllByCurrentUser(User currentUser) {
+    List<MonitoringModel> models = repository.findByUser(currentUser);
+    return models.stream()
+                 .map(this::convertToMapper)
+                 .collect(Collectors.toList());
+}
+
     // GET Service {id} -----------------------------------
 
-    public MonitoringMapper getById(Long id) {
-        MonitoringModel model = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
+    public MonitoringMapper getById(Long id, User currentUser) {
+        MonitoringModel model = repository.findByIdAndUser(id, currentUser).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
 
         return convertToMapper(model);
     }
 
     // PUT Service {id} --------------------------------
 
-    public MonitoringMapper update(Long id, MonitoringDTO dto){
-        MonitoringModel existing = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
+    public MonitoringMapper update(Long id, MonitoringDTO dto, User currentUser){
+        MonitoringModel existing = repository.findByIdAndUser(id, currentUser).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
 
         existing.setName(dto.getName());
         existing.setUrl(dto.getUrl());
@@ -73,10 +79,9 @@ public class MonitoringService {
 
     // DELETE Service {id} --------------------------------
     
-    public void delete(Long id) {
-        if(!repository.existsById(id)){
-            throw new IllegalArgumentException("Monitoring_not_found");
-        }
+    public void delete(Long id, User currentUser) {
+        repository.findByIdAndUser(id, currentUser)
+            .orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
         repository.deleteById(id);
     }
 
@@ -101,8 +106,8 @@ public class MonitoringService {
     }
 
 
-    public DashbaordMetricsDTO getDashbaordMetrics() {
-        List<MonitoringModel> allService = repository.findAll();
+    public DashbaordMetricsDTO getDashbaordMetrics(User currentUser) {
+        List<MonitoringModel> allService = repository.findByUser(currentUser);
 
         long total = allService.size();
         long online = allService.stream().filter(s -> "true".equalsIgnoreCase(s.getStatus())).count();

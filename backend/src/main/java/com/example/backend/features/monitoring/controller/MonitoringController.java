@@ -55,10 +55,14 @@ public class MonitoringController {
     }
 
 
-    // GET ALL ----------------------------------
+    // GET ALL (BY USER) ----------------------------------
     @GetMapping
-    public ApiResponse<List<MonitoringMapper>> getAll() {
-        List<MonitoringMapper> response = monitoringService.getAll();
+    public ApiResponse<List<MonitoringMapper>> getAll(Authentication authentication) {
+
+        User currentUser = (User) authentication.getPrincipal();
+
+        List<MonitoringMapper> response = monitoringService.getAllByCurrentUser(currentUser);
+        // List<MonitoringMapper> response = monitoringService.getAll();
         return new ApiResponse<List<MonitoringMapper>>(
                 true,
                 response,
@@ -71,8 +75,10 @@ public class MonitoringController {
 
     //  GET BY ID ----------------------------------
     @GetMapping("/{id}")
-    public ApiResponse<MonitoringMapper> getById(@PathVariable Long id) {
-        MonitoringMapper response = monitoringService.getById(id);
+    public ApiResponse<MonitoringMapper> getById(@PathVariable Long id, Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+
+        MonitoringMapper response = monitoringService.getById(id, currentUser);
         return new ApiResponse<MonitoringMapper>(
                 true,
                 response,
@@ -86,8 +92,11 @@ public class MonitoringController {
     // UPDATE ----------------------------------
     @PutMapping("/{id}")
     public ApiResponse<MonitoringMapper> update(@PathVariable Long id,
-                                                @Valid @RequestBody MonitoringDTO dto) {
-        MonitoringMapper response = monitoringService.update(id, dto);
+                                                @Valid @RequestBody MonitoringDTO dto, Authentication authentication) {
+
+        User currentUser = (User) authentication.getPrincipal();
+
+        MonitoringMapper response = monitoringService.update(id, dto, currentUser);
         return new ApiResponse<MonitoringMapper>(
                 true,
                 response,
@@ -100,8 +109,9 @@ public class MonitoringController {
 
     // DELETE ----------------------------------
     @DeleteMapping("/{id}")
-    public ApiResponse<Void> delete(@PathVariable Long id) {
-        monitoringService.delete(id);
+    public ApiResponse<Void> delete(@PathVariable Long id, Authentication authentication) {
+        User currentUser = (User) authentication.getPrincipal();
+        monitoringService.delete(id, currentUser);
         return new ApiResponse<Void>(
                 true,
                 null,
@@ -154,9 +164,10 @@ public class MonitoringController {
 
     
     @GetMapping("/dashboard/metrics")
-    public ApiResponse<DashbaordMetricsDTO> getMetrics() {
+    public ApiResponse<DashbaordMetricsDTO> getMetrics(Authentication authentication) {
         try {
-            DashbaordMetricsDTO metrics = monitoringService.getDashbaordMetrics();
+            User currentUser = (User) authentication.getPrincipal();
+            DashbaordMetricsDTO metrics = monitoringService.getDashbaordMetrics(currentUser);
             
             return new ApiResponse<>(
                 true,
