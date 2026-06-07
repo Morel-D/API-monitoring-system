@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,13 +32,17 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
         response.put("errors", errors);
 
+        String correlationId = MDC.get("correlationId");
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
             new ApiResponse<>(
                 false, 
                 null,
                 "feild_validation_errors",
                 errors,
-                 null)
+                 LocalDateTime.now(),
+                correlationId
+                )
         );
     }
     
@@ -45,13 +50,17 @@ public class GlobalExceptionHandler {
     // Bussiness Error
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handlerBusinessErrors(IllegalArgumentException ex) {
+
+        String correlationId = MDC.get("correlationId");
+
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
             new ApiResponse<>(
                 false, 
                 null,
                 ex.getMessage(), 
                 null, 
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                correlationId
             )
         );
     }
@@ -61,8 +70,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleBadCredentials(
             BadCredentialsException ex) {
 
+                String correlationId = MDC.get("correlationId");
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-            new ApiResponse<>(false, null, "invalid_credentials", null, LocalDateTime.now())
+            new ApiResponse<>(false, null, "invalid_credentials", null, LocalDateTime.now(), correlationId)
         );
     }
 
@@ -71,8 +82,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleAuthenticationError(
             AuthenticationException ex) {
 
+            String correlationId = MDC.get("correlationId");
+
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-            new ApiResponse<>(false, null, "authentication_required", null, LocalDateTime.now())
+            new ApiResponse<>(false, null, "authentication_required", null, LocalDateTime.now(), correlationId)
         );
     }
 
@@ -81,8 +94,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleAccessDenied(
             AccessDeniedException ex) {
 
+            String correlationId = MDC.get("correlationId"); 
+
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-            new ApiResponse<>(false, null, "access_denied", null, LocalDateTime.now())
+            new ApiResponse<>(false, null, "access_denied", null, LocalDateTime.now(), correlationId)
         );
     }
 
@@ -90,13 +105,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Object>> handleGenericError(Exception ex) {
         ex.printStackTrace();
+
+        String correlationId = MDC.get("correlationId");
+
         return ResponseEntity.internalServerError().body(
             new ApiResponse<>(
                 false,
                 null,
                 "An unexpected error occurred",
                 "SERVER_ERROR",
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                correlationId
             )
         );
     }
