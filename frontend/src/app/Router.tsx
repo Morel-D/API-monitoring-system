@@ -5,6 +5,7 @@ import { ServicesPage } from "../pages/Services";
 import { LoginPage } from "../pages/Login";
 import { RegisterPage } from "../pages/Resgister";
 import { ProtectedRoute } from "./Protected";
+import { AuditPage } from "../pages/Aduit";
 
 export const router = createBrowserRouter([
       // Public -------------------------------------------------
@@ -21,7 +22,8 @@ export const router = createBrowserRouter([
         ),
         children: [
             {index: true, element: <DashboardPage />},
-            {path: 'services', element: <ServicesPage />}
+            {path: 'services', element: <ServicesPage />},
+            {path: 'audit', element: <AuditPage /> }
         ]
     },
 

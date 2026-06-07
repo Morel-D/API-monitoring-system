@@ -4,6 +4,7 @@ import { useAuthStore } from '../../features/auth/AuthStore';
 const navItems = [
   { to: '/',         label: 'Dashboard', icon: 'ti-layout-dashboard' },
   { to: '/services', label: 'Services',  icon: 'ti-server',           badge: 0 },
+  { to: '/audit', label: 'Audit Log',  icon: 'ti-audit',           badge: 0 },
 ];
 
 export function Sidebar() {
