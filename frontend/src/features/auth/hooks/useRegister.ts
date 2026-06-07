@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../AuthStore';
 import { formatAuthError, validateRegister, type FormErrors, type RegisterFields } from '../validation';
 import { toastError, toastSuccess } from '../../../utils/widgets/toast/Toaststore';
+import { getCorrelationId } from '../../../utils/errors';
 
 
 export function useRegister() {
@@ -31,7 +32,7 @@ export function useRegister() {
     } catch (err) {
       const msg = (err as Error).message;
       setServerError(formatAuthError(msg));
-      toastError(msg);
+      toastError(msg, getCorrelationId(e));
     }
   };
 

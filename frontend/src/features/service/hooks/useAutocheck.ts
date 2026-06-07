@@ -3,6 +3,7 @@ import { useServiceStore } from '../serviceStore';
 import type { Service } from '../../../types';
 import { validateAutoCheck } from '../validation';
 import { toastError, toastSuccess } from '../../../utils/widgets/toast/Toaststore';
+import { getCorrelationId } from '../../../utils/errors';
 
 export function useAutoCheck(service: Service | null, onDone: () => void) {
   const { updateAutoCheck } = useServiceStore();
@@ -30,7 +31,7 @@ export function useAutoCheck(service: Service | null, onDone: () => void) {
       toastSuccess('done');
       onDone();
     } catch (e) {
-      toastError((e as Error).message);
+      toastError((e as Error).message, getCorrelationId(e));
     } finally {
       setLoading(false);
     }

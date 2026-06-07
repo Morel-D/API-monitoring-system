@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import type { DashboardMetrics } from '../../../types/dashbaord';
 import { dashboardApi } from '../DashbaordApi';
 import { toastError } from '../../../utils/widgets/toast/Toaststore';
+import { getCorrelationId } from '../../../utils/errors';
 
 
 export function useDashboard() {
@@ -18,7 +19,7 @@ export function useDashboard() {
     } catch (e) {
       const msg = (e as Error).message;
       setError(msg);
-      toastError(msg);
+      toastError(msg, getCorrelationId(e));
     } finally {
       setLoading(false);
     }

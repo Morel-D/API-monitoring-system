@@ -3,6 +3,7 @@ import type { Service } from '../../../types';
 import type { HealthLog } from '../../../types/healthLog';
 import { toastSuccess, toastError } from '../../../utils/widgets/toast/Toaststore';
 import { serviceApi } from '../ServiceApi';
+import { getCorrelationId } from '../../../utils/errors';
 
 export function useHealthLogs(service: Service | null) {
   const [logs, setLogs]         = useState<HealthLog[]>([]);
@@ -42,7 +43,7 @@ export function useHealthLogs(service: Service | null) {
       setLogs((prev) => [...prev, newLog]);
       toastSuccess('done');
     } catch (e) {
-      toastError((e as Error).message);
+      toastError((e as Error).message, getCorrelationId(e));
     } finally {
       setChecking(false);
     }

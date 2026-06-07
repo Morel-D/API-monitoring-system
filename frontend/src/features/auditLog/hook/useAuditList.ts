@@ -3,6 +3,7 @@ import type { AuditLog } from '../../../types/auditLog';
 import { ACTION_META, type AuditFilter } from '../helper';
 import { auditApi } from '../AudtApi';
 import { toastError } from '../../../utils/widgets/toast/Toaststore';
+import { getCorrelationId } from '../../../utils/errors';
 
 
 export function useAuditList() {
@@ -21,7 +22,7 @@ export function useAuditList() {
     } catch (e) {
       const msg = (e as Error).message;
       setError(msg);
-      toastError(msg);
+      toastError(msg, getCorrelationId(e));
     } finally {
       setLoading(false);
     }

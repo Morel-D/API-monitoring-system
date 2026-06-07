@@ -21,16 +21,45 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// On token_error → clear session and redirect to login
+
+// Helper — extract correlationId from response 
+function extractCorrelationId(response?: {
+  headers?: Record<string, string>;
+  data?: { correlationId?: string };
+}): string | undefined {
+  if (!response) return undefined;
+  return (
+    response.headers?.['x-correlation-id'] ??
+    response.headers?.['X-Correlation-Id'] ??
+    response.data?.correlationId
+  );
+}
+
+
+// Response interceptor 
 apiClient.interceptors.response.use(
-  (res) => res,
+  (response: any) => {
+    const correlationId = extractCorrelationId(response);
+    if (correlationId) {
+      (response as any)._correlationId = correlationId;
+    }
+    return response;
+  },
   (err) => {
-    const message = err.response?.data?.message ?? err.message ?? 'Unknown error';
+    const message       = err.response?.data?.message ?? err.message ?? 'Unknown error';
+    const correlationId = extractCorrelationId(err.response);
+ 
+    // Session expired
     if (message === 'token_error' || err.response?.status === 401) {
       localStorage.removeItem(TOKEN_KEY);
-      // window.location.href = '/login';
+      window.location.href = '/login';
     }
-    return Promise.reject(new Error(message));
+ 
+    // Attach correlationId to the error so hooks can forward it to the toast
+    const error = new Error(message) as Error & { correlationId?: string };
+    error.correlationId = correlationId;
+ 
+    return Promise.reject(error);
   }
 );
 

@@ -3,6 +3,7 @@ import type { Service, ServiceFormValues } from '../../../types';
 import { useServiceStore } from '../serviceStore';
 import { toastError, toastSuccess } from '../../../utils/widgets/toast/Toaststore';
 import { validateServiceForm, type ServiceFormErrors } from '../validation';
+import { getCorrelationId } from '../../../utils/errors';
 
 const DEFAULTS: ServiceFormValues = {
   name:            '',
@@ -43,7 +44,7 @@ export function useServiceForm(initial?: Service, onDone?: () => void) {
       }
       onDone?.();
     } catch (e) {
-      toastError((e as Error).message);
+      toastError((e as Error).message, getCorrelationId(e));
     } finally {
       setLoading(false);
     }

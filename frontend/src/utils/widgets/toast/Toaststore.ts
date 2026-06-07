@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 
 export interface ToastPayload {
-  id:        string;
-  success:   boolean;
-  message:   string;
-  timestamp: string; 
-  duration?: number; 
+  id:            string;
+  success:       boolean;
+  message:       string;
+  timestamp:     string;
+  correlationId?: string;
+  duration?:     number;
 }
 
 interface ToastState {
@@ -29,26 +30,28 @@ export const useToastStore = create<ToastState>((set) => ({
   clear: () => set({ toasts: [] }),
 }));
 
-// ── Convenience helpers ───────────────────────────────────────
-// Call these anywhere after an API response
+// ── Helpers ───────────────────────────────────────────────────
 
 export function toastFromResponse(response: {
-  success: boolean;
-  message: string;
-  timestamp: string;
+  success:        boolean;
+  message:        string;
+  timestamp:      string;
+  correlationId?: string;
 }) {
   useToastStore.getState().show({
-    success:   response.success,
-    message:   response.message,
-    timestamp: response.timestamp,
+    success:       response.success,
+    message:       response.message,
+    timestamp:     response.timestamp,
+    correlationId: response.correlationId,
   });
 }
 
-export function toastError(message: string) {
+export function toastError(message: string, correlationId?: string) {
   useToastStore.getState().show({
-    success:   false,
+    success:       false,
     message,
-    timestamp: new Date().toISOString(),
+    timestamp:     new Date().toISOString(),
+    correlationId,
   });
 }
 

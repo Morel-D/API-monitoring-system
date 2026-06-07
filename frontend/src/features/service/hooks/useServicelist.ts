@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { resolveStatus, type ServiceStatus } from '../../../types';
 import { useServiceStore } from '../serviceStore';
 import { toastError, toastSuccess } from '../../../utils/widgets/toast/Toaststore';
+import { getCorrelationId } from '../../../utils/errors';
 
 
 export type ServiceFilter = 'ALL' | ServiceStatus;
@@ -35,7 +36,7 @@ export function useServiceList() {
       toastSuccess('done');
       setDeleteTarget(null);
     } catch (e) {
-      toastError((e as Error).message);
+      toastError((e as Error).message, getCorrelationId(e));
     } finally {
       setDeleting(false);
     }
@@ -46,7 +47,7 @@ export function useServiceList() {
       await triggerCheck(id);
       toastSuccess('done');
     } catch (e) {
-      toastError((e as Error).message);
+      toastError((e as Error).message, getCorrelationId(e));
     }
   }, [triggerCheck]);
 

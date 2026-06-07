@@ -17,7 +17,7 @@ export const serviceApi = {
   },
 
   create: async (payload: ServiceFormValues): Promise<Service> => {
-    const { data } = await apiClient.post('/api/service', payload);
+    const { data } = await apiClient.post('/api/services', payload);
     if (!data.success) throw new Error(data.message);
     return data.data;
   },
