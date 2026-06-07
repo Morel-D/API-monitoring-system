@@ -1,0 +1,13 @@
+package com.example.backend.shared.enums;
+
+public enum AuditAction {
+
+    USER_LOGIN,
+    USER_REGISTER,
+    USER_CREATED_SERVICE,
+    USER_UPDATED_SERVICE,
+    USER_DELETED_SERVICE,
+    USER_TRIGGERED_CHECK,
+    USER_ENABLED_AUTOCHECK,
+    USER_DISABLED_AUTOCHECK
+}

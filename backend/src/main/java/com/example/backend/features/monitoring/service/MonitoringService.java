@@ -1,6 +1,7 @@
 package com.example.backend.features.monitoring.service;
 import com.example.backend.features.HealthCheckLog.model.HealthCheckLogModel;
 import com.example.backend.features.HealthCheckLog.repository.HealthCheckRepository;
+import com.example.backend.features.audit.service.AuditLogService;
 import com.example.backend.features.dashbaord.dto.DashbaordMetricsDTO;
 import com.example.backend.features.dashbaord.dto.DashboardServiceDTO;
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import com.example.backend.features.monitoring.mapper.MonitoringMapper;
 import com.example.backend.features.monitoring.model.MonitoringModel;
 import com.example.backend.features.monitoring.repository.MonitoringRepository;
 import com.example.backend.security.model.User;
+import com.example.backend.shared.enums.AuditAction;
 
 @Service
 public class MonitoringService {
@@ -21,10 +23,12 @@ public class MonitoringService {
     
     private final MonitoringRepository repository;
     private final HealthCheckRepository healthCheckRepository;
+    private final AuditLogService auditLogService;
 
-    public MonitoringService(MonitoringRepository repository, HealthCheckRepository healthCheckRepository) {
+    public MonitoringService(MonitoringRepository repository, HealthCheckRepository healthCheckRepository, AuditLogService auditLogService) {
         this.repository = repository;
         this.healthCheckRepository = healthCheckRepository;
+        this.auditLogService = auditLogService;
     }
 
     // POST Service ---------------------------------------
@@ -38,6 +42,14 @@ public class MonitoringService {
         model.setLastCheckedAt(LocalDateTime.now());
 
         MonitoringModel save = repository.save(model);
+
+        auditLogService.logAction(
+            currentUser, 
+            AuditAction.USER_CREATED_SERVICE, 
+            "SERVICE", 
+            save.getId(),
+            "Created service: " + save.getName()
+        );
 
         return convertToMapper(save);
     }
@@ -74,6 +86,14 @@ public class MonitoringService {
 
         MonitoringModel updates = repository.save(existing);
 
+        auditLogService.logAction(
+            currentUser, 
+            AuditAction.USER_UPDATED_SERVICE, 
+            "SERVICE", 
+            updates.getId(),
+            "Created service: " + updates.getName()
+        );
+
         return convertToMapper(updates);
     }
 
@@ -82,7 +102,8 @@ public class MonitoringService {
     public void delete(Long id, User currentUser) {
         repository.findByIdAndUser(id, currentUser)
             .orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
-        repository.deleteById(id);
+         repository.deleteById(id);
+
     }
 
 

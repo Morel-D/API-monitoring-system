@@ -5,11 +5,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.features.audit.service.AuditLogService;
 import com.example.backend.security.dto.AuthResponse;
 import com.example.backend.security.dto.LoginRequest;
 import com.example.backend.security.dto.RegisterRequest;
 import com.example.backend.security.jwt.JwtService;
 import com.example.backend.security.model.User;
+import com.example.backend.shared.enums.AuditAction;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +24,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final AuditLogService auditLogService;
 
 
     public AuthResponse register(RegisterRequest request) {
@@ -60,6 +63,8 @@ public class AuthService {
 
         var user = userService.findByEmail(request.getEmail());
         String token = jwtService.generateToken(user.getEmail());
+
+        auditLogService.logAction(user, AuditAction.USER_LOGIN, "USER", user.getId(), "User logged in");
 
         return new AuthResponse(token, "Bearer");
     }
