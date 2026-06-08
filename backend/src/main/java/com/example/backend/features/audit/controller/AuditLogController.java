@@ -1,8 +1,9 @@
 package com.example.backend.features.audit.controller;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,10 +25,10 @@ public class AuditLogController {
 
 
     @GetMapping
-    public ApiResponse<List<AuditLogModel>> getMyAuditLogs(Authentication authentication) {
+    public ApiResponse<Page<AuditLogModel>> getMyAuditLogs(Authentication authentication, Pageable pageable) {
         var currentUser = (com.example.backend.security.model.User) authentication.getPrincipal();
 
-        List<AuditLogModel> logs = auditLogService.getLogsByCurrentUser(currentUser);
+        Page<AuditLogModel> logs = auditLogService.getLogsByCurrentUser(currentUser, pageable);
 
         return new ApiResponse<>(
             true,
@@ -40,13 +41,13 @@ public class AuditLogController {
 
 
     @GetMapping("/recent")
-    public ApiResponse<List<AuditLogModel>> getRecentAuditLogs(
+    public ApiResponse<Page<AuditLogModel>> getRecentAuditLogs(
             Authentication authentication,
             @RequestParam(defaultValue = "50") int limit) {
 
         var currentUser = (com.example.backend.security.model.User) authentication.getPrincipal();
 
-        List<AuditLogModel> logs = auditLogService.getRecentLogsByUser(currentUser, limit);
+        Page<AuditLogModel> logs = auditLogService.getRecentLogsByUser(currentUser, limit);
 
         return new ApiResponse<>(
             true,

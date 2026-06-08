@@ -1,11 +1,14 @@
 import type { AutoCheck, Service, ServiceFormValues } from "../../types";
 import type { HealthLog } from "../../types/healthLog";
+import type { PagedResponse } from "../../types/pagination";
 import apiClient from "../../utils/Axios";
 
 
 export const serviceApi = {
-  getAll: async (): Promise<Service[]> => {
-    const { data } = await apiClient.get('/api/service');
+  getAll: async (page = 0, size = 10): Promise<PagedResponse<Service>> => {
+    const { data } = await apiClient.get('/api/service', {
+      params: { page, size, sort: 'createdAt,desc' },
+    });
     if (!data.success) throw new Error(data.message);
     return data.data;
   },
@@ -17,7 +20,7 @@ export const serviceApi = {
   },
 
   create: async (payload: ServiceFormValues): Promise<Service> => {
-    const { data } = await apiClient.post('/api/services', payload);
+    const { data } = await apiClient.post('/api/service', payload);
     if (!data.success) throw new Error(data.message);
     return data.data;
   },
@@ -44,9 +47,12 @@ export const serviceApi = {
     return data.data;
   },
 
-  getHealthLogs: async (serviceId: number): Promise<HealthLog[]> => {
-    const { data } = await apiClient.get(`/api/health/service/${serviceId}`);
+  getHealthLogs: async (serviceId: number, page = 0, size = 10): Promise<PagedResponse<HealthLog>> => {
+    const { data } = await apiClient.get(`/api/health/service/${serviceId}`, {
+      params: { page, size, sort: 'checkedAt,desc' },
+    });
     if (!data.success) throw new Error(data.message);
     return data.data;
   },
+ 
 };

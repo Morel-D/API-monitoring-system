@@ -1,9 +1,10 @@
 package com.example.backend.features.monitoring.controller;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,13 +58,13 @@ public class MonitoringController {
 
     // GET ALL (BY USER) ----------------------------------
     @GetMapping
-    public ApiResponse<List<MonitoringMapper>> getAll(Authentication authentication) {
+    public ApiResponse<Page<MonitoringMapper>> getAll(Authentication authentication, Pageable pageable) {
 
         User currentUser = (User) authentication.getPrincipal();
 
-        List<MonitoringMapper> response = monitoringService.getAllByCurrentUser(currentUser);
+        Page<MonitoringMapper> response = monitoringService.getAllByCurrentUser(currentUser, pageable);
         // List<MonitoringMapper> response = monitoringService.getAll();
-        return new ApiResponse<List<MonitoringMapper>>(
+        return new ApiResponse<Page<MonitoringMapper>>(
                 true,
                 response,
                 "done",

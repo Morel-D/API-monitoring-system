@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,9 +39,9 @@ public class HealthCheckController {
 
     // GET BY SERVICE ID ------------------------
     @GetMapping("/service/{serviceId}")
-    public ApiResponse<List<HealthCheckLogMapper>> getByServiceId(@PathVariable Long serviceId) {
+    public ApiResponse<Page<HealthCheckLogMapper>> getByServiceId(@PathVariable Long serviceId, Pageable pageable) {
         try {
-            List<HealthCheckLogMapper> response = healthCheckService.getByServiceID(serviceId);
+            Page<HealthCheckLogMapper> response = healthCheckService.getByServiceID(serviceId, pageable);
             
             return new ApiResponse<>(
                     true,

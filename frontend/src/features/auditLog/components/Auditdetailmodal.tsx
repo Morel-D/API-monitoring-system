@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import type { AuditLog } from '../../../types/auditLog';
-import { AuditActionBadge } from './Auditactionbadge';
 import { formatDate } from '../helper';
+import { AuditActionBadge } from './Auditactionbadge';
+
 
 interface AuditDetailModalProps {
   log:     AuditLog | null;
@@ -31,10 +32,8 @@ export function AuditDetailModal({ log, onClose }: AuditDetailModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-
       <div className="relative z-10 w-full max-w-md mx-4 bg-[#16191f] border border-white/[0.1] rounded-xl shadow-2xl">
 
-        {/* Header */}
         <div className="flex items-start justify-between px-5 py-4 border-b border-white/[0.07]">
           <div>
             <h2 className="text-sm font-medium text-[#e8eaf0]">Audit log detail</h2>
@@ -47,65 +46,46 @@ export function AuditDetailModal({ log, onClose }: AuditDetailModalProps) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="px-5 py-5 space-y-4">
-
-          {/* Action */}
           <Row label="Action">
             <AuditActionBadge action={log.action} />
           </Row>
 
-          {/* User */}
-          <Row label="User">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-                <span className="text-[10px] font-medium text-blue-400 uppercase">
-                  {log.user.name.charAt(0)}
-                </span>
+          {log.user && (
+            <Row label="User">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
+                  <span className="text-[10px] font-medium text-blue-400 uppercase">
+                    {log.user.name.charAt(0)}
+                  </span>
+                </div>
+                <div>
+                  <p className="text-[12px] text-[#e8eaf0]">{log.user.name}</p>
+                  <p className="text-[10px] text-[#6b7280]">{log.user.email}</p>
+                </div>
               </div>
-              <div>
-                <p className="text-[12px] text-[#e8eaf0]">{log.user.name}</p>
-                <p className="text-[10px] text-[#6b7280]">{log.user.email}</p>
-              </div>
-            </div>
-          </Row>
+            </Row>
+          )}
 
-          {/* Description */}
           <Row label="Description">
-            <p className="text-[12px] text-[#e8eaf0] font-sans leading-relaxed">
-              {log.description}
-            </p>
+            <p className="text-[12px] text-[#e8eaf0] font-sans leading-relaxed">{log.description}</p>
           </Row>
 
-          {/* Entity info */}
           {(log.entityType || log.entityId) && (
             <div className="grid grid-cols-2 gap-4">
-              {log.entityType && (
-                <Row label="Entity type">
-                  <span className="text-[#6b7280]">{log.entityType}</span>
-                </Row>
-              )}
-              {log.entityId && (
-                <Row label="Entity ID">
-                  <span className="text-[#6b7280]">#{log.entityId}</span>
-                </Row>
-              )}
+              {log.entityType && <Row label="Entity type"><span className="text-[#6b7280]">{log.entityType}</span></Row>}
+              {log.entityId   && <Row label="Entity ID"><span className="text-[#6b7280]">#{log.entityId}</span></Row>}
             </div>
           )}
 
-          {/* Timestamp */}
           <Row label="Timestamp">
             <span className="text-[#6b7280]">{formatDate(log.createdAt)}</span>
           </Row>
         </div>
 
-        {/* Footer */}
         <div className="flex justify-end px-5 py-4 border-t border-white/[0.07]">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-5 py-2 text-sm font-medium text-[#6b7280] bg-[#1e222a] border border-white/[0.07] rounded-md hover:text-[#e8eaf0] hover:border-white/[0.15] transition-all"
-          >
+          <button type="button" onClick={onClose}
+            className="px-5 py-2 text-sm font-medium text-[#6b7280] bg-[#1e222a] border border-white/[0.07] rounded-md hover:text-[#e8eaf0] hover:border-white/[0.15] transition-all">
             Close
           </button>
         </div>

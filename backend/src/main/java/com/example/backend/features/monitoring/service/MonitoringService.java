@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.features.monitoring.dto.MonitoringDTO;
@@ -61,11 +63,9 @@ public class MonitoringService {
     }
 
     // GET By USER Service ----------------------------------------
-    public List<MonitoringMapper> getAllByCurrentUser(User currentUser) {
-    List<MonitoringModel> models = repository.findByUser(currentUser);
-    return models.stream()
-                 .map(this::convertToMapper)
-                 .collect(Collectors.toList());
+    public Page<MonitoringMapper> getAllByCurrentUser(User currentUser, Pageable pageable) {
+    Page<MonitoringModel> page = repository.findByUser(currentUser, pageable);
+    return page.map(this::convertToMapper);
 }
 
     // GET Service {id} -----------------------------------

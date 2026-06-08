@@ -16,7 +16,7 @@ export interface AuditUser {
 
 export interface AuditLog {
   id:          number;
-  user:        AuditUser;
+  user?:       AuditUser;
   action:      AuditAction;
   entityType:  string;
   entityId:    number | null;

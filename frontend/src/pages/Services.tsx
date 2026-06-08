@@ -9,6 +9,7 @@ import { AutoCheckModal } from '../features/service/components/Autocheckmodal';
 import { ServiceForm } from '../features/service/components/Serviceform';
 import { ServiceLogsModal } from '../features/service/components/ServiceLogsModal';
 import { type ServiceFilter, useServiceList } from '../features/service/hooks/useServicelist';
+import { Pagination } from '../components/common/Pagination';
 
 const FILTERS: { label: string; value: ServiceFilter }[] = [
   { label: 'All',     value: 'ALL'     },
@@ -21,9 +22,9 @@ const COLS = '20px 1fr 90px 120px 130px 100px';
 
 export function ServicesPage() {
   const {
-    services, filtered, loading, error,
+    paged, services, filtered, loading, error,
     filter, setFilter, count, fetchAll,
-    checkingIds, handleCheck,
+     page, goTo, goNext, goPrev,
     deleteTarget, setDeleteTarget, deleting, handleDelete,
   } = useServiceList();
 
@@ -34,7 +35,9 @@ export function ServicesPage() {
 
   const openAdd  = () => { setEditing(null); setFormOpen(true); };
   const openEdit = (svc: Service) => { setEditing(svc); setFormOpen(true); };
-  const closeForm = () => { setFormOpen(false); setEditing(null); };
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditing(null);  };
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -75,7 +78,7 @@ export function ServicesPage() {
       {/* Table */}
       <div className="flex-1 overflow-y-auto px-6 py-4">
         {services.length > 0 && (
-          <div className="grid px-4 mb-2 gap-3" style={{ gridTemplateColumns: COLS }}>
+          <div className="grid px-10 mb-2 gap-3" style={{ gridTemplateColumns: COLS }}>
             {['', 'Service', 'Status', 'Auto-check', 'Last checked', 'Actions'].map((h) => (
               <span key={h} className="text-[9px] uppercase tracking-[0.1em] text-[#6b7280]">{h}</span>
             ))}
@@ -125,7 +128,7 @@ export function ServicesPage() {
               const status = resolveStatus(svc.status);
               return (
                 <div key={svc.id}
-                  className="bg-[#16191f] border border-white/[0.07] rounded-lg px-4 py-3.5 grid items-center gap-3 hover:border-white/[0.14] transition-colors"
+                  className="bg-[#16191f] border border-white/[0.07] rounded-lg px-10 py-3.5 grid items-center gap-3 hover:border-white/[0.14] transition-colors"
                   style={{ gridTemplateColumns: COLS }}>
 
                   <StatusDot status={svc.status.toString()} pulse />
@@ -197,10 +200,16 @@ export function ServicesPage() {
         )}
       </div>
 
+      {paged && paged.totalPages > 1 && (
+  <Pagination page={page} totalPages={paged.totalPages} totalElements={paged.totalElements}
+    pageSize={paged.size} first={paged.first} last={paged.last}
+    onPrev={goPrev} onNext={goNext} onGoTo={goTo} />
+)}
+
       {/* Service form modal */}
       <Modal isOpen={formOpen} onClose={closeForm} title={editing ? 'Edit service' : 'Add service'}
         widthClass="sm:w-[480px] w-[90%] max-w-[95%] rounded-xl">
-        <ServiceForm initial={editing ?? undefined} onDone={closeForm} onCancel={closeForm} />
+        <ServiceForm initial={editing ?? undefined} onDone={closeForm} onCancel={closeForm} onRefresh={fetchAll} />
       </Modal>
 
       {/* Auto-check modal */}

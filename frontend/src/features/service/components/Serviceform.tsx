@@ -7,6 +7,7 @@ interface ServiceFormProps {
   initial?: Service;
   onDone:   () => void;
   onCancel: () => void;
+  onRefresh?: () => void;  
 }
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {

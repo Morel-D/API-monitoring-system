@@ -4,21 +4,25 @@ import { ACTION_META, type AuditFilter } from '../helper';
 import { auditApi } from '../AudtApi';
 import { toastError } from '../../../utils/widgets/toast/Toaststore';
 import { getCorrelationId } from '../../../utils/errors';
+import type { PagedResponse } from '../../../types/pagination';
 
 
+const PAGE_SIZE = 10;
+ 
 export function useAuditList() {
-  const [logs, setLogs]       = useState<AuditLog[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState<string | null>(null);
-  const [filter, setFilter]   = useState<AuditFilter>('ALL');
+  const [page, setPage]         = useState(0);
+  const [paged, setPaged]       = useState<PagedResponse<AuditLog> | null>(null);
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState<string | null>(null);
+  const [filter, setFilter]     = useState<AuditFilter>('ALL');
   const [selected, setSelected] = useState<AuditLog | null>(null);
-
-  const fetchAll = useCallback(async () => {
+ 
+  const fetchPage = useCallback(async (p: number) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await auditApi.getAll();
-      setLogs(data);
+      const data = await auditApi.getAll(p, PAGE_SIZE);
+      setPaged(data);
     } catch (e) {
       const msg = (e as Error).message;
       setError(msg);
@@ -27,28 +31,38 @@ export function useAuditList() {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => { fetchAll(); }, [fetchAll]);
-
-  const filtered = filter === 'ALL'
-    ? logs
-    : logs.filter((l) => ACTION_META[l.action]?.category === filter);
-
-  const count = (v: AuditFilter) =>
-    v === 'ALL'
-      ? logs.length
-      : logs.filter((l) => ACTION_META[l.action]?.category === v).length;
-
+ 
+  useEffect(() => { fetchPage(page); }, [fetchPage, page]);
+ 
+  const goTo    = (p: number) => setPage(p);
+  const goNext  = () => { if (paged && !paged.last)  setPage((p) => p + 1); };
+  const goPrev  = () => { if (paged && !paged.first) setPage((p) => p - 1); };
+ 
+  // Client-side category filter on current page content
+  const filtered = (paged?.content ?? []).filter((l) =>
+    filter === 'ALL' ? true : ACTION_META[l.action]?.category === filter
+  );
+ 
+  const handleFilterChange = (f: AuditFilter) => {
+    setFilter(f);
+    // Reset to first page when filter changes
+    if (page !== 0) setPage(0); else fetchPage(0);
+  };
+ 
   return {
-    logs,
+    paged,
     filtered,
     loading,
     error,
     filter,
-    setFilter,
-    count,
-    fetchAll,
+    setFilter: handleFilterChange,
+    page,
+    goTo,
+    goNext,
+    goPrev,
+    fetchAll: () => fetchPage(page),
     selected,
     setSelected,
   };
 }
+ 

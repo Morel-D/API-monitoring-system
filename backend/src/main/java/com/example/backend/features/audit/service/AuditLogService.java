@@ -1,9 +1,10 @@
 package com.example.backend.features.audit.service;
 
 
-import java.util.List;
-
-import org.hibernate.audit.AuditLog;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.features.audit.model.AuditLogModel;
@@ -36,14 +37,16 @@ public class AuditLogService {
 
 
     //GET LOGS FOR CURRENT USER 
-    public List<AuditLogModel> getLogsByCurrentUser(User currentUser) {
-        return auditLogRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId());
+    public Page<AuditLogModel> getLogsByCurrentUser(User currentUser, Pageable pageable) {
+        return auditLogRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId(), pageable);
     }
 
     // Get recent logs (e.g., last 50)
-    public List<AuditLogModel> getRecentLogsByUser(User currentUser, int limit) {
-        List<AuditLogModel> logs = getLogsByCurrentUser(currentUser);
-        return logs.stream().limit(limit).toList();
+    public Page<AuditLogModel> getRecentLogsByUser(User currentUser, int limit) {
+        if (limit <= 0) limit = 20;
+        
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("createdAt").descending());
+        return auditLogRepository.findByUserIdOrderByCreatedAtDesc(currentUser.getId(), pageable);
     }
 
 }

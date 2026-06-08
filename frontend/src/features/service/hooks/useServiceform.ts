@@ -11,10 +11,10 @@ const DEFAULTS: ServiceFormValues = {
   autoCheckEnable: false,
   checkInterval:   5,
 };
-
+ 
 export function useServiceForm(initial?: Service, onDone?: () => void) {
   const { create, update } = useServiceStore();
-
+ 
   const [values, setValues] = useState<ServiceFormValues>({
     name:            initial?.name            ?? DEFAULTS.name,
     url:             initial?.url             ?? DEFAULTS.url,
@@ -23,25 +23,24 @@ export function useServiceForm(initial?: Service, onDone?: () => void) {
   });
   const [errors, setErrors]   = useState<ServiceFormErrors>({});
   const [loading, setLoading] = useState(false);
-
+ 
   const set = <K extends keyof ServiceFormValues>(key: K, value: ServiceFormValues[K]) => {
     setValues((v) => ({ ...v, [key]: value }));
-    setErrors((e: any) => ({ ...e, [key]: undefined }));
+    setErrors((e) => ({ ...e, [key]: undefined }));
   };
-
+ 
   const submit = async () => {
     const errs = validateServiceForm(values);
     if (Object.keys(errs).length) { setErrors(errs); return; }
-
+ 
     setLoading(true);
     try {
       if (initial) {
-        await update(initial.id, values);
-        toastSuccess('done');
+        await update(initial.id, values);  // store auto-refreshes
       } else {
-        await create(values);
-        toastSuccess('done');
+        await create(values);              // store auto-refreshes
       }
+      toastSuccess('done');
       onDone?.();
     } catch (e) {
       toastError((e as Error).message, getCorrelationId(e));
@@ -49,11 +48,8 @@ export function useServiceForm(initial?: Service, onDone?: () => void) {
       setLoading(false);
     }
   };
-
-  const reset = () => {
-    setValues(DEFAULTS);
-    setErrors({});
-  };
-
+ 
+  const reset = () => { setValues(DEFAULTS); setErrors({}); };
+ 
   return { values, errors, loading, set, submit, reset };
 }
