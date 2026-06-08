@@ -8,7 +8,7 @@ import { getCorrelationId } from '../../../utils/errors';
 const DEFAULTS: ServiceFormValues = {
   name:            '',
   url:             '',
-  autoCheckEnable: false,
+  autoCheckEnabled: false,
   checkInterval:   5,
 };
  
@@ -18,7 +18,7 @@ export function useServiceForm(initial?: Service, onDone?: () => void) {
   const [values, setValues] = useState<ServiceFormValues>({
     name:            initial?.name            ?? DEFAULTS.name,
     url:             initial?.url             ?? DEFAULTS.url,
-    autoCheckEnable: initial?.autoCheckEnable ?? DEFAULTS.autoCheckEnable,
+    autoCheckEnabled: initial?.autoCheckEnable ?? DEFAULTS.autoCheckEnabled,
     checkInterval:   initial?.checkInterval   ?? DEFAULTS.checkInterval,
   });
   const [errors, setErrors]   = useState<ServiceFormErrors>({});

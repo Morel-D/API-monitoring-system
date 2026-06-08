@@ -43,6 +43,23 @@ public class MonitoringService {
         model.setUser(currentUser);
         model.setLastCheckedAt(LocalDateTime.now());
 
+        // === Handle autoCheckEnabled and checkInterval properly ===
+        boolean autoCheckEnabled = dto.getAutoCheckEnabled() != null ? dto.getAutoCheckEnabled() : false;
+        int checkInterval;
+
+            if (autoCheckEnabled) {
+                // Only use provided interval if auto-check is enabled
+                checkInterval = (dto.getCheckIntervalMinutes() != null && dto.getCheckIntervalMinutes() > 0) 
+                                ? dto.getCheckIntervalMinutes() 
+                                : 1;   // default
+            } else {
+                // If auto-check is disabled, force default interval
+                checkInterval = 1;
+            }
+
+            model.setAutoCheckEnable(autoCheckEnabled);
+            model.setCheckInterval(checkInterval);
+
         MonitoringModel save = repository.save(model);
 
         auditLogService.logAction(

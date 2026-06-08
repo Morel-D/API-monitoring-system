@@ -64,31 +64,49 @@ export function ServiceForm({ initial, onDone, onCancel }: ServiceFormProps) {
       </Field>
 
       {/* Auto-check toggle */}
-      <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-[#0e1014] border border-white/[0.07]">
+      {/* <div className="flex items-center justify-between py-3 px-4 rounded-lg bg-[#0e1014] border border-white/[0.07]">
         <div>
           <p className="text-[12px] font-medium text-[#e8eaf0]">Auto monitoring</p>
           <p className="text-[11px] text-[#6b7280] mt-0.5">Automatically check on a schedule</p>
         </div>
-        <Toggle checked={values.autoCheckEnable} onChange={(v) => set('autoCheckEnable', v)} />
-      </div>
+        <Toggle checked={values.autoCheckEnabled} onChange={(v) => set('autoCheckEnabled', v)} />
+      </div> */}
 
-      {values.autoCheckEnable && (
-        <Field label="Check interval (minutes)" error={errors.checkInterval}>
-          <div className="flex items-center gap-3">
-            <Input
-              type="number"
-              min={1}
-              value={values.checkInterval}
-              onChange={(e) => set('checkInterval', Number(e.target.value))}
-              hasError={!!errors.checkInterval}
-              className="w-28"
-            />
-            <span className="text-[11px] text-[#6b7280]">
-              Every {values.checkInterval} minute{values.checkInterval !== 1 ? 's' : ''}
-            </span>
+        {/* {values.autoCheckEnabled && (
+          <div className="space-y-1.5">
+            <label className="text-[10px] uppercase tracking-[0.1em] text-[#6b7280]">
+              Check interval (minutes)
+            </label>
+            {errors.checkInterval && (
+              <p className="text-[11px] text-red-400">{errors.checkInterval}</p>
+            )}
+            <div className="flex items-center gap-3">
+              <input
+                type="number"
+                min={1}
+                value={values.checkInterval}
+                onChange={(e) => set('checkInterval', Number(e.target.value))}
+                className="w-24 h-9 bg-[#0e1014] border border-white/[0.07] rounded-md px-3 text-sm text-[#e8eaf0] font-mono focus:outline-none focus:border-blue-500/50 transition-colors"
+              />
+              <div className="flex gap-1.5">
+                {[1, 5, 15, 30].map((p) => (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => set('checkInterval', p)}
+                    className={`text-[10px] px-2.5 py-1.5 rounded border transition-all font-mono ${
+                      values.checkInterval === p
+                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                        : 'text-[#6b7280] border-white/[0.07] hover:bg-[#1e222a] hover:text-[#e8eaf0]'
+                    }`}
+                  >
+                    {p}m
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </Field>
-      )}
+        )} */}
 
       <div className="flex justify-end gap-3 pt-2">
         <button

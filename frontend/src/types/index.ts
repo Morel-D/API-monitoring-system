@@ -15,7 +15,7 @@ export interface Service {
 export interface ServiceFormValues {
   name: string;
   url: string;
-  autoCheckEnable: boolean;
+  autoCheckEnabled: boolean;
   checkInterval: number;
 }
 

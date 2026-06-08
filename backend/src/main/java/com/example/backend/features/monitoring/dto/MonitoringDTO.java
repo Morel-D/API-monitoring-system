@@ -2,7 +2,9 @@ package com.example.backend.features.monitoring.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class MonitoringDTO {
 
     @NotNull(message = "Name is needed")
@@ -13,7 +15,7 @@ public class MonitoringDTO {
 
     private Boolean autoCheckEnabled = false;   
 
-    @Min(value = 1, message = "Interval must be at least 1 minute")
+    @Min(value = 1, message = "Check interval must be at least 1 minute")
     private Integer checkIntervalMinutes = 1;   
 
     // Constructors
