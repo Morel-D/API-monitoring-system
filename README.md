@@ -19,6 +19,28 @@ WatchTower is a full-stack application designed to monitor external API endpoint
 
 ---
 
+
+---
+
+## Screenshots
+
+### Dashboard Overview
+![Dashboard](assets/dashbaord.PNG)
+
+### Services Management
+![Services List](assets/service.PNG)
+
+### Health Check Setting
+![Health Check Setting](assets/enable.PNG)
+
+### Health Check Logs
+![Health Check Logs](assets/log.PNG)
+
+### Audit Trail
+![Audit Logs](assets/audit.PNG)
+
+---
+
 ## Tech Stack
 
 ### Backend

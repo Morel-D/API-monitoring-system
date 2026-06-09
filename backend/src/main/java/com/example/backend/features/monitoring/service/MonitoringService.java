@@ -108,7 +108,7 @@ public class MonitoringService {
             AuditAction.USER_UPDATED_SERVICE, 
             "SERVICE", 
             updates.getId(),
-            "Created service: " + updates.getName()
+            "Updated service: " + updates.getName()
         );
 
         return convertToMapperWithLatestStatus(updates);
@@ -117,10 +117,16 @@ public class MonitoringService {
     // DELETE Service {id} --------------------------------
     
     public void delete(Long id, User currentUser) {
-        repository.findByIdAndUser(id, currentUser)
-            .orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
-         repository.deleteById(id);
+    MonitoringModel service = repository.findByIdAndUser(id, currentUser)
+            .orElseThrow(() -> new IllegalArgumentException("Service not found or access denied"));
 
+    // Optional: Explicitly delete health checks (extra safety)
+    healthCheckRepository.deleteByMonitoringId(id);
+
+    repository.delete(service);
+
+    auditLogService.logAction(currentUser, AuditAction.USER_DELETED_SERVICE, "SERVICE", id,
+            "Deleted service: " + service.getName());
     }
 
 

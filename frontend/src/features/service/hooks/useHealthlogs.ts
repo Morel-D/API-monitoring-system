@@ -5,6 +5,7 @@ import { toastSuccess, toastError } from '../../../utils/widgets/toast/Toaststor
 import { serviceApi } from '../ServiceApi';
 import { getCorrelationId } from '../../../utils/errors';
 import type { PagedResponse } from '../../../types/pagination';
+import { useServiceStore } from '../serviceStore';
 
 const PAGE_SIZE = 10;
  
@@ -52,6 +53,8 @@ export function useHealthLogs(service: Service | null) {
       // Refresh first page to see latest log
       setPage(0);
       fetchPage(0);
+
+      useServiceStore.getState().refresh();
     } catch (e) {
       toastError((e as Error).message, getCorrelationId(e));
     } finally {

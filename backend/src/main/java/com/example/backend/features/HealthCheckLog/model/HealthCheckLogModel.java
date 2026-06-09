@@ -5,6 +5,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.example.backend.features.monitoring.model.MonitoringModel;
 
@@ -25,7 +27,8 @@ public class HealthCheckLogModel {
     private Long id;
     
     @ManyToOne
-    @JoinColumn(name = "serviceId")
+    @JoinColumn(name = "serviceId", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private MonitoringModel monitoring;
     
     private BigDecimal statusCode;

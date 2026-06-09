@@ -36,7 +36,7 @@ public class MonitoringModel {
     public LocalDateTime createdAt;
 
     // OWNERSHIP -----------------------------------------
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;

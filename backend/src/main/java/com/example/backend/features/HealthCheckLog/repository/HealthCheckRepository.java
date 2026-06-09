@@ -5,8 +5,11 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.backend.features.HealthCheckLog.model.HealthCheckLogModel;
 
@@ -15,6 +18,11 @@ public interface HealthCheckRepository extends JpaRepository<HealthCheckLogModel
 
     // This is the correct way to query by the related MonitoringModel's ID
     Page<HealthCheckLogModel> findByMonitoringId(Long monitoringId, Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM HealthCheckLogModel h WHERE h.monitoring.id = :monitoringId")
+    void deleteByMonitoringId(Long monitoringId);
 
     // Get latest checks first
     Page<HealthCheckLogModel> findByMonitoringIdOrderByCheckedAtDesc(Long monitoringId, Pageable pageable);
@@ -28,8 +36,5 @@ public interface HealthCheckRepository extends JpaRepository<HealthCheckLogModel
 
     // Get latest check for a specific service
     Optional<HealthCheckLogModel> findTopByMonitoringIdOrderByCheckedAtDesc(Long monitoringId);
-
-
-    
 
 }
