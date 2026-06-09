@@ -9,6 +9,7 @@ export const serviceApi = {
     const { data } = await apiClient.get('/api/service', {
       params: { page, size, sort: 'createdAt,desc' },
     });
+    console.log("GET SERVICE ---> ", data);
     if (!data.success) throw new Error(data.message);
     return data.data;
   },
@@ -20,10 +21,7 @@ export const serviceApi = {
   },
 
   create: async (payload: ServiceFormValues): Promise<Service> => {
-    console.log("CREATE DATA --> ", payload);
     const { data } = await apiClient.post('/api/service', payload);
-    console.log("RECEIVED DATA --> ", data);
-
     if (!data.success) throw new Error(data.message);
     return data.data;
   },

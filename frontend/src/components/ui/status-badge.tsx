@@ -33,7 +33,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ color, text, status }) => {
     : { classes: colorMap[color ?? 'gray'] ?? colorMap.gray, text: text ?? '' };
 
   return (
-    <span className={`inline-flex items-center px-3 w-9 py-0.5 rounded text-[10px] font-mono font-medium border ${resolved.classes}`}>
+    <span className={`inline-flex items-center px-3 py-0.5 rounded text-[10px] font-mono font-medium border ${resolved.classes}`}>
       {resolved.text}
     </span>
   );

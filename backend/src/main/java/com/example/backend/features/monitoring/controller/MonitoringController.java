@@ -168,7 +168,7 @@ public class MonitoringController {
     public ApiResponse<DashbaordMetricsDTO> getMetrics(Authentication authentication) {
         try {
             User currentUser = (User) authentication.getPrincipal();
-            DashbaordMetricsDTO metrics = monitoringService.getDashbaordMetrics(currentUser);
+            DashbaordMetricsDTO metrics = monitoringService.getDashboardMetrics(currentUser);
             
             return new ApiResponse<>(
                 true,

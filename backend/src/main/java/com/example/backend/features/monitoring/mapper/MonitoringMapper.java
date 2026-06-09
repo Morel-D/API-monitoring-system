@@ -7,73 +7,42 @@ public class MonitoringMapper {
     public Long id;
     public String name;
     public String url;
-    public String status;
+    public String status;           
+    public Boolean latestSuccess;   
+    public String latestMessage;   
     public boolean autoCheckEnable;
     public int checkInterval;
     public LocalDateTime lastCheckedAt;
     public LocalDateTime createdAt;
 
+    public MonitoringMapper(Long id, String name, String url, String status,
+                            Boolean latestSuccess, String latestMessage,
+                            boolean autoCheckEnable, int checkInterval,
+                            LocalDateTime lastCheckedAt, LocalDateTime createdAt) {
+        
+        this.id = id;
+        this.name = name;
+        this.url = url;
+        this.status = status;
+        this.latestSuccess = latestSuccess;
+        this.latestMessage = latestMessage;
+        this.autoCheckEnable = autoCheckEnable;
+        this.checkInterval = checkInterval;
+        this.lastCheckedAt = lastCheckedAt;
+        this.createdAt = createdAt;
+    }
+
+    // Getters & Setters
+    public Long getId() { return id; }
+    public String getName() { return name; }
+    public String getUrl() { return url; }
+    public String getStatus() { return status; }
     
-    public MonitoringMapper(Long id, String name, String url, String status, boolean autoCheckEnable, int checkInterval, LocalDateTime lastCheckedAt,
-            LocalDateTime createdAt) {
-        this.id = id;
-        this.name = name;
-        this.url = url;
-        this.status = status;
-        this.autoCheckEnable = autoCheckEnable;
-        this.checkInterval = checkInterval;
-        this.lastCheckedAt = lastCheckedAt;
-        this.createdAt = createdAt;
-    }
+    public Boolean getLatestSuccess() { return latestSuccess; }
+    public String getLatestMessage() { return latestMessage; }
 
-
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getUrl() {
-        return url;
-    }
-    public void setUrl(String url) {
-        this.url = url;
-    }
-    public String getStatus() {
-        return status;
-    }
-    public void setStatus(String status) {
-        this.status = status;
-    }
-        public boolean isAutoCheckEnable() {
-        return autoCheckEnable;
-    }
-    public void setAutoCheckEnable(boolean autoCheckEnable) {
-        this.autoCheckEnable = autoCheckEnable;
-    }
-    public int getCheckInterval() {
-        return checkInterval;
-    }
-    public void setCheckInterval(int checkInterval) {
-        this.checkInterval = checkInterval;
-    }
-    public LocalDateTime getLastCheckedAt() {
-        return lastCheckedAt;
-    }
-    public void setLastCheckedAt(LocalDateTime lastCheckedAt) {
-        this.lastCheckedAt = lastCheckedAt;
-    }
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
+    public boolean isAutoCheckEnable() { return autoCheckEnable; }
+    public int getCheckInterval() { return checkInterval; }
+    public LocalDateTime getLastCheckedAt() { return lastCheckedAt; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }

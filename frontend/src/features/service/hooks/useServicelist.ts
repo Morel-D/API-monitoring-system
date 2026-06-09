@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { resolveStatus, type Service, type ServiceStatus } from '../../../types';
+import {  type ServiceStatus } from '../../../types';
 import { useServiceStore } from '../serviceStore';
 import { toastError, toastSuccess } from '../../../utils/widgets/toast/Toaststore';
 import { getCorrelationId } from '../../../utils/errors';
+import { resolveStatus } from '../validation';
 
 
 export type ServiceFilter = 'ALL' | ServiceStatus;
@@ -18,25 +19,25 @@ export function useServiceList() {
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
   const [deleting, setDeleting]         = useState(false);
  
-  // Initial fetch
   useEffect(() => { fetchPage(0); }, [fetchPage]);
  
   const services = paged?.content ?? [];
  
+  // Filter uses resolveStatus(svc) — reads latestSuccess, not svc.status
   const filtered = filter === 'ALL'
     ? services
-    : services.filter((s) => resolveStatus(s.status) === filter);
+    : services.filter((s) => resolveStatus(s) === filter);
  
   const count = (v: ServiceFilter) =>
     v === 'ALL'
       ? (paged?.totalElements ?? 0)
-      : services.filter((s) => resolveStatus(s.status) === v).length;
+      : services.filter((s) => resolveStatus(s) === v).length;
  
   const handleDelete = async () => {
     if (deleteTarget === null) return;
     setDeleting(true);
     try {
-      await remove(deleteTarget);   // store auto-refreshes
+      await remove(deleteTarget);
       toastSuccess('done');
       setDeleteTarget(null);
     } catch (e) {
@@ -48,7 +49,7 @@ export function useServiceList() {
  
   const handleCheck = async (id: number) => {
     try {
-      await triggerCheck(id);       // store auto-refreshes
+      await triggerCheck(id);
       toastSuccess('done');
     } catch (e) {
       toastError((e as Error).message, getCorrelationId(e));

@@ -1,15 +1,16 @@
 export type ServiceStatus = 'UP' | 'DOWN' | 'SLOW' | 'UNKNOWN';
 
 export interface Service {
-  id: number;
-  name: string;
-  url: string;
-  status: string;             // "true" | "false"
+  id:              number;
+  name:            string;
+  url:             string;
+  status:          string;
+  latestSuccess:   boolean | null;
+  latestMessage:   string | null;
   autoCheckEnable: boolean;
-  checkInterval: number;      // minutes
-  lastCheckedAt: string | null;
-  createdAt: string;
-
+  checkInterval:   number; 
+  lastCheckedAt:   string | null;
+  createdAt:       string;
 }
 
 export interface ServiceFormValues {
@@ -24,12 +25,6 @@ export interface AutoCheck {
   intervalMinutes: number;
 }
 
-// Normalise the raw API status string to our UI status
-export function resolveStatus(status: string | null): ServiceStatus {
-  if (status === 'true')  return 'UP';
-  if (status === 'false') return 'DOWN';
-  return 'UNKNOWN';
-}
 
 // Format ISO date to a readable relative-ish string
 export function formatCheckedAt(iso: string | null): string {

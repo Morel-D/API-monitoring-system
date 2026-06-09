@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import StatusBadge from '../../../components/ui/status-badge';
 import type { RecentService } from '../../../types/dashbaord';
 import { formatCheckedAt, resolveStatus } from '../helpers';
+import { StatusDot } from '../../../components/ui/Statusdot';
 
 interface RecentServicesListProps {
   services: RecentService[];
@@ -30,8 +31,8 @@ export function RecentServicesList({ services }: RecentServicesListProps) {
       </div>
 
       {services.map((svc) => {
-        const status = resolveStatus(svc.status);
-        const isUp   = status === 'UP';
+        const status = resolveStatus(svc);
+        const isUp = status === 'UP';
         return (
           <div
             key={svc.id}
@@ -39,10 +40,7 @@ export function RecentServicesList({ services }: RecentServicesListProps) {
             style={{ gridTemplateColumns: '10px 1fr 90px 110px 100px' }}
           >
             {/* Dot */}
-            <span className="relative flex items-center justify-center w-2 h-2">
-              {isUp && <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-40 animate-ping" />}
-              <span className={`relative w-2 h-2 rounded-full ${isUp ? 'bg-emerald-400' : 'bg-red-400'}`} />
-            </span>
+            <StatusDot status={status} pulse />
 
             {/* Name + URL */}
             <div className="min-w-0">
@@ -50,14 +48,16 @@ export function RecentServicesList({ services }: RecentServicesListProps) {
               <p className="text-[10px] text-[#6b7280] truncate">{svc.url}</p>
             </div>
 
-            <StatusBadge status={status} />
+            <div className='px-0'>
+              <StatusBadge status={status} />
+            </div>
 
             <span className={`text-[11px] font-mono tabular-nums ${isUp ? 'text-emerald-400' : 'text-red-400'}`}>
               {svc.lastResponse}
             </span>
 
             <span className="text-[11px] text-[#6b7280] font-mono">
-              {formatCheckedAt(svc.lastChecked)}
+              {svc.lastChecked == null || svc.lastChecked == "Never" ? "--" : formatCheckedAt(svc.lastChecked)}
             </span>
           </div>
         );

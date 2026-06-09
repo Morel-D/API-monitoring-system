@@ -1,5 +1,10 @@
-export function resolveStatus(status: string): 'UP' | 'DOWN' {
-  return status === 'true' ? 'UP' : 'DOWN';
+import type { ServiceStatus } from "../../types";
+import type { RecentService } from "../../types/dashbaord";
+
+export function resolveStatus(svc: RecentService): ServiceStatus {
+  if (svc.latestSuccess === null || svc.latestSuccess === undefined) return 'UNKNOWN';
+  if (svc.latestSuccess) return 'UP';
+  return 'DOWN';
 }
 
 export function formatCheckedAt(iso: string): string {

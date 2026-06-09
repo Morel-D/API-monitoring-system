@@ -70,19 +70,19 @@ public class MonitoringService {
             "Created service: " + save.getName()
         );
 
-        return convertToMapper(save);
+        return convertToMapperWithLatestStatus(save);
     }
 
     // GET Service ----------------------------------------
     public List<MonitoringMapper> getAll() {
         List<MonitoringModel> models = repository.findAll();
-            return models.stream().map(this::convertToMapper).collect(Collectors.toList());
+            return models.stream().map(this::convertToMapperWithLatestStatus).collect(Collectors.toList());
     }
 
     // GET By USER Service ----------------------------------------
     public Page<MonitoringMapper> getAllByCurrentUser(User currentUser, Pageable pageable) {
     Page<MonitoringModel> page = repository.findByUser(currentUser, pageable);
-    return page.map(this::convertToMapper);
+    return page.map(this::convertToMapperWithLatestStatus);
 }
 
     // GET Service {id} -----------------------------------
@@ -90,7 +90,7 @@ public class MonitoringService {
     public MonitoringMapper getById(Long id, User currentUser) {
         MonitoringModel model = repository.findByIdAndUser(id, currentUser).orElseThrow(() -> new IllegalArgumentException("Monitoring_not_found"));
 
-        return convertToMapper(model);
+        return convertToMapperWithLatestStatus(model);
     }
 
     // PUT Service {id} --------------------------------
@@ -111,7 +111,7 @@ public class MonitoringService {
             "Created service: " + updates.getName()
         );
 
-        return convertToMapper(updates);
+        return convertToMapperWithLatestStatus(updates);
     }
 
     // DELETE Service {id} --------------------------------
@@ -144,19 +144,52 @@ public class MonitoringService {
     }
 
 
-    public DashbaordMetricsDTO getDashbaordMetrics(User currentUser) {
-        List<MonitoringModel> allService = repository.findByUser(currentUser);
+    public DashbaordMetricsDTO getDashboardMetrics(User currentUser) {
+        List<MonitoringModel> allServices = repository.findByUser(currentUser);
 
-        long total = allService.size();
-        long online = allService.stream().filter(s -> "true".equalsIgnoreCase(s.getStatus())).count();
-        long offline = allService.stream().filter(s -> "false".equalsIgnoreCase(s.getStatus())).count();
+        long total = allServices.size();
 
-        double avgResponseTime = calaculateAverageResponseTime();
+        long online = 0, offline = 0, slow = 0, unknown = 0;
+        double totalResponseTime = 0;
+        int checkedServices = 0;
 
-        // Get recnt services (first 3 only)
-        List<DashboardServiceDTO> recentService = allService.stream().limit(3).map(this::convertToDashboardServiceDTO).toList();
+        List<DashboardServiceDTO> recentServices = allServices.stream()
+                .limit(3)
+                .map(this::convertToDashboardServiceDTO)
+                .toList();
 
-        return new DashbaordMetricsDTO(total, online, offline, avgResponseTime, recentService);
+        for (MonitoringModel service : allServices) {
+            HealthCheckLogModel latestLog = healthCheckRepository
+                    .findTopByMonitoringIdOrderByCheckedAtDesc(service.getId())
+                    .orElse(null);
+
+            String latestStatus = "UNKNOWN";
+            if (latestLog != null) {
+                latestStatus = latestLog.getMessage() != null ? latestLog.getMessage() : "UNKNOWN";
+                
+                if (latestLog.getResponseTime() != null) {
+                    totalResponseTime += latestLog.getResponseTime().toMillis();
+                    checkedServices++;
+                }
+            }
+
+            switch (latestStatus.toUpperCase()) {
+                case "UP" -> online++;
+                case "DOWN" -> offline++;
+                case "SLOW" -> slow++;
+                default -> unknown++;
+            }
+        }
+
+        double avgResponseTime = checkedServices > 0 ? totalResponseTime / checkedServices : 0.0;
+
+        return new DashbaordMetricsDTO(
+            total,
+            online,
+            offline,
+            avgResponseTime,
+            recentServices
+        );
     }
 
 
@@ -174,41 +207,85 @@ public class MonitoringService {
         return sum/latestCheck.size();
     }
 
-    private MonitoringMapper convertToMapper(MonitoringModel model) {
-        return new MonitoringMapper(
-            model.getId(),
-            model.getName(),
-            model.getUrl(),
-            model.getStatus(), 
-            model.isAutoCheckEnable(),
-            model.getCheckInterval(),
-            model.getLastCheckedAt(), 
-            model.getCreatedAt()
-        );
-    }
+    // private MonitoringMapper convertToMapper(MonitoringModel model) {
+    //     return new MonitoringMapper(
+    //         model.getId(),
+    //         model.getName(),
+    //         model.getUrl(),
+    //         model.getStatus(), 
+    //         model.isAutoCheckEnable(),
+    //         model.getCheckInterval(),
+    //         model.getLastCheckedAt(), 
+    //         model.getCreatedAt()
+    //     );
+    // }
 
     private DashboardServiceDTO convertToDashboardServiceDTO(MonitoringModel model) {
 
-        HealthCheckLogModel latestLog = healthCheckRepository.findTopByMonitoringIdOrderByCheckedAtDesc(model.getId()).orElse(null);
+            HealthCheckLogModel latest = healthCheckRepository
+                        .findTopByMonitoringIdOrderByCheckedAtDesc(model.getId())
+                        .orElse(null);
 
-        String lastResponse = "-";
-        String lastChecked = "Never";
+                String latestStatus = "UNKNOWN";
+                Boolean latestSuccess = null;
+                String latestMessage = null;
+                String lastResponse = "—";
+                String lastChecked = "Never";
 
-        if(latestLog != null){
-            lastResponse = latestLog.getResponseTime() != null ? latestLog.getResponseTime().toMillis() + " ms" : "-";
+                if (latest != null) {
+                    latestStatus = latest.getStatus() != null ? latest.getStatus() : "UNKNOWN";
+                    latestSuccess = latest.getSucess();
+                    latestMessage = latest.getMessage();
 
-            lastChecked = latestLog.getCheckedAt() != null ? latestLog.getCheckedAt().toString() : "Never";
+                    if (latest.getResponseTime() != null) {
+                        lastResponse = latest.getResponseTime().toMillis() + " ms";
+                    }
+                    if (latest.getCheckedAt() != null) {
+                        lastChecked = latest.getCheckedAt().toString();
+                    }
+                }
+
+                return new DashboardServiceDTO(
+                    model.getId(),
+                    model.getName(),
+                    model.getUrl(),
+                    model.getStatus(),
+                    latestStatus,
+                    latestSuccess,
+                    latestMessage,
+                    lastResponse,
+                    lastChecked
+                );
+    }
+
+    private MonitoringMapper convertToMapperWithLatestStatus(MonitoringModel model) {
+    // Get latest health check status
+    HealthCheckLogModel latestLog = healthCheckRepository
+                .findTopByMonitoringIdOrderByCheckedAtDesc(model.getId())
+                .orElse(null);
+
+        Boolean latestSuccess = null;
+        String latestMessage = null;
+
+        if (latestLog != null) {
+            latestSuccess = latestLog.getSucess();
+            latestMessage = latestLog.getMessage();
         }
 
+    return new MonitoringMapper(
+        model.getId(),
+        model.getName(),
+        model.getUrl(),
+        model.getStatus(), 
+        latestSuccess,
+        latestMessage,
+        model.isAutoCheckEnable(),
+        model.getCheckInterval(),
+        model.getLastCheckedAt(),
+        model.getCreatedAt()
+    );
+}
 
-        return new DashboardServiceDTO(
-            model.getId(), 
-            model.getName(),
-            model.getUrl(), 
-            model.getStatus(), 
-            lastResponse,
-            lastChecked
-        );
-    }
+
 }
 
