@@ -16,7 +16,7 @@ export function DashboardPage() {
     <div className="flex flex-col h-full overflow-hidden">
 
       {/* Topbar */}
-      <header className="flex items-center justify-between px-6 py-3.5 bg-[#16191f] border-b border-white/[0.07] flex-shrink-0">
+      <header className="flex items-center justify-between px-4 lg:px-6 py-3.5 bg-[#16191f] border-b border-white/[0.07] flex-shrink-0">
         <div>
           <h1 className="text-sm font-medium text-[#e8eaf0]">Dashboard</h1>
           <p className="text-[11px] text-[#6b7280]">Overview of all monitored services</p>
@@ -44,7 +44,7 @@ export function DashboardPage() {
       </header>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-5">
+      <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-5">
 
         {/* Error banner */}
         {error && (
@@ -59,7 +59,7 @@ export function DashboardPage() {
         )}
 
         {/* Stat cards */}
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard
             label="Total Services"
             value={loading ? '—' : String(metrics?.totalServices ?? 0)}
