@@ -5,7 +5,7 @@ const TOKEN_KEY = 'wt_token';
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080",
   headers: { "Content-Type": "application/json" },
-  timeout: 10_000,
+  timeout: 60_000,
 });
 
 // Inject Bearer token from localStorage on every request
