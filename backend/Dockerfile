@@ -27,4 +27,4 @@ COPY --from=builder /app/target/*.jar app.jar
 EXPOSE 8081
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Xmx400m", "-jar", "app.jar"]
