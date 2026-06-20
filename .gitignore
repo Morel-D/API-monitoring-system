@@ -54,6 +54,7 @@ backend/.springBeans
 backend/.sts4-cache
 
 # Sensitive files
+backend/src/main/resources/application.properties
 backend/.env
 backend/application-*.yml
 backend/application-*.properties
