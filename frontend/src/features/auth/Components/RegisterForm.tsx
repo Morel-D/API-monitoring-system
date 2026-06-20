@@ -1,8 +1,8 @@
 import { useRegister } from '../hooks/useRegister';
-import { AuthField, AuthInput, AuthError, AuthSubmitButton, AuthLink } from './AuthShared';
+import { AuthField, AuthInput, AuthSubmitButton, AuthLink } from './AuthShared';
 
 export function RegisterForm() {
-  const { values, errors, serverError, loading, set, submit } = useRegister();
+  const { values, errors, loading, set, submit } = useRegister();
 
   return (
     <div className="space-y-4">

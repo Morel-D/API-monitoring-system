@@ -1,9 +1,6 @@
-import { Link } from 'react-router-dom';
 import StatusBadge from '../../../components/ui/status-badge';
 import type { RecentService } from '../../../types/dashbaord';
 import { formatCheckedAt, resolveStatus } from '../helpers';
-import { StatusDot } from '../../../components/ui/Statusdot';
-
 interface RecentServicesListProps {
   services: RecentService[];
 }
@@ -15,11 +12,11 @@ export function RecentServicesList({ services }: RecentServicesListProps) {
     <div className="space-y-1.5">
       {/* Wrap table in horizontal scroll on mobile */}
       <div className="overflow-x-auto">
-        <div className="min-w-[480px]">
+        <div className="min-w-120">
           {/* Header */}
           <div className="grid px-4 mb-1 gap-4" style={{ gridTemplateColumns: '10px 1fr 90px 110px 100px' }}>
             {['', 'Service', 'Status', 'Last response', 'Checked at'].map((h) => (
-              <span key={h} className="text-[9px] uppercase tracking-[0.1em] text-[#6b7280]">{h}</span>
+              <span key={h} className="text-[9px] uppercase tracking-widest text-[#6b7280]">{h}</span>
             ))}
           </div>
 

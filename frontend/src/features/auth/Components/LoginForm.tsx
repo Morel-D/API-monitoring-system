@@ -1,8 +1,8 @@
 import { useLogin } from '../hooks/useLogin';
-import { AuthField, AuthInput, AuthError, AuthSubmitButton, AuthLink } from './AuthShared';
+import { AuthField, AuthInput, AuthSubmitButton, AuthLink } from './AuthShared';
 
 export function LoginForm() {
-  const { values, errors, serverError, loading, set, submit } = useLogin();
+  const { values, errors, loading, set, submit } = useLogin();
 
   return (
     <div className="space-y-4">

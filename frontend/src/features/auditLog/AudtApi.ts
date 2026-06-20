@@ -1,4 +1,5 @@
-import type { AuditLog, PagedResponse } from "../../types/auditLog";
+import type { AuditLog } from "../../types/auditLog";
+import type { PagedResponse } from "../../types/pagination";
 import apiClient from "../../utils/Axios";
 
 
