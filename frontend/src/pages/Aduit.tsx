@@ -53,7 +53,7 @@ export function AuditPage() {
         {filtered.length > 0 && (
           <div className="hidden lg:grid px-4 mb-2 gap-4" style={{ gridTemplateColumns: '1fr 160px 1fr 110px 40px' }}>
             {['User / Action', 'Badge', 'Description', 'Date', ''].map((h) => (
-              <span key={h} className="text-[9px] uppercase tracking-[0.1em] text-[#6b7280]">{h}</span>
+              <span key={h} className="text-[9px] uppercase tracking-widest text-[#6b7280]">{h}</span>
             ))}
           </div>
         )}
@@ -61,10 +61,10 @@ export function AuditPage() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20 gap-2 text-[#6b7280]">
-            <svg className="animate-spin size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            {/* <svg className="animate-spin size-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
+            </svg> */}
             <span className="text-[13px]">Loading logs…</span>
           </div>
         )}
