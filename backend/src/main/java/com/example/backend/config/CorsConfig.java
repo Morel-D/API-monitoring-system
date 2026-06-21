@@ -14,7 +14,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://localhost:5173");
-        config.addAllowedOrigin("https://your-actual-vercel-url.vercel.app");
+        config.addAllowedOrigin("https://watchtower-backend-ptv5.onrender.com");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
