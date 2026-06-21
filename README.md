@@ -173,6 +173,22 @@ Includes:
 
 ---
 
+## Running Locally with Docker
+
+```bash
+git clone https://github.com/Morel-D/API-monitoring-system.git
+cd API-monitoring-system
+cp .env.example .env  # fill in local Postgres credentials
+docker compose up --build
+```
+
+Access:
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:8081`
+- Database: `localhost:5432`
+
+---
+
 ## Development Practices
 
 - Feature-based architecture
@@ -181,6 +197,25 @@ Includes:
 - Consistent pagination
 - Centralized error handling
 - Explicit entity design (no overuse of `@Data`)
+
+---
+
+## Live Deployment
+
+| Layer | Platform | Notes |
+|---|---|---|
+| Frontend | [Vercel](https://vercel.com) | Static SPA, global CDN, zero downtime |
+| Backend | [Render](https://render.com) | Dockerized Spring Boot, free tier (sleeps after 15min idle) |
+| Database | [Neon](https://neon.tech) | Serverless PostgreSQL, scale-to-zero |
+| Uptime monitoring | [UptimeRobot](https://uptimerobot.com) | 5-min health pings to reduce cold starts |
+| CI/CD | GitHub Actions | Automated build + test on every push |
+
+### Production debugging highlights
+Real issues encountered and resolved during deployment — not theoretical:
+- Diagnosed a config file shadowing bug where Maven's actual config path (`src/main/resources/`) differed from a decoy root-level file, causing silent schema failures in production
+- Resolved a CORS preflight failure caused by duplicate, conflicting `CorsConfigurationSource` beans — consolidated into a single source of truth inside the Spring Security filter chain
+- Fixed an axios interceptor bug that force-redirected on any 401, including failed login attempts themselves, wiping error state before users could read it
+- Tuned JVM heap (`-Xmx400m`) to fit Render's free-tier 512MB memory constraint
 
 ---
 
