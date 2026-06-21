@@ -57,7 +57,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             className="hidden  lg:flex flex-shrink-0 text-[#6b7280] hover:text-[#e8eaf0] p-1 rounded hover:bg-white/5 transition-colors"
             title="Collapse sidebar"
           >
-            Morel
+            {/* Morel */}
             <i className="ti ti-chevron-left text-base" aria-hidden />
           </button>
         )}
@@ -72,7 +72,7 @@ export function Sidebar({ mobileOpen, onMobileClose }: SidebarProps) {
             className="text-[#6b7280] hover:text-[#e8eaf0] p-1 rounded hover:bg-white/5 transition-colors"
             title="Expand sidebar"
           >
-          Morel
+          {/* Morel */}
             <i className="ti ti-chevron-right text-base" aria-hidden />
           </button>
         </div>

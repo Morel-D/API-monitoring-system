@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.example.backend.features.monitoring.model.MonitoringModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
