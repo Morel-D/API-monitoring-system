@@ -48,17 +48,20 @@ apiClient.interceptors.response.use(
   (err) => {
     const message       = err.response?.data?.message ?? err.message ?? 'Unknown error';
     const correlationId = extractCorrelationId(err.response);
- 
-    // Session expired
-    if (message === 'token_error' || err.response?.status === 401) {
+
+    // Don't force-redirect on auth endpoints — let login/register handle their own errors
+    const isAuthEndpoint = err.config?.url?.includes('/api/auth/');
+
+    // Session expired — only applies to protected routes, not login/register itself
+    if (!isAuthEndpoint && (message === 'token_error' || err.response?.status === 401)) {
       localStorage.removeItem(TOKEN_KEY);
       window.location.href = '/login';
     }
- 
+
     // Attach correlationId to the error so hooks can forward it to the toast
     const error = new Error(message) as Error & { correlationId?: string };
     error.correlationId = correlationId;
- 
+
     return Promise.reject(error);
   }
 );

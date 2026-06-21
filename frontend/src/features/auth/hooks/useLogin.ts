@@ -21,8 +21,7 @@ export function useLogin() {
     setServerError(null);
   };
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async () => {
     const errs = validateLogin(values);
     if (Object.keys(errs).length) { setErrors(errs); return; }
 
@@ -33,7 +32,7 @@ export function useLogin() {
     } catch (err) {
       const msg = (err as Error).message;
       setServerError(formatAuthError(msg));
-      toastError(msg, getCorrelationId(e));
+      toastError(msg, getCorrelationId(err));
     }
   };
 
