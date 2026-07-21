@@ -210,6 +210,8 @@ Access:
 | Uptime monitoring | [UptimeRobot](https://uptimerobot.com) | 5-min health pings to reduce cold starts |
 | CI/CD | GitHub Actions | Automated build + test on every push |
 
+**Note on cold starts**: The backend spins down after ~15 minutes of inactivity on Render's free tier, so the first request afterward can take ~30–50s. Rather than masking this with a keepalive ping — which burns through free-tier usage hours and edges toward violating fair-use terms — the frontend surfaces a "waking up the server" notice on cold start instead. See [Architecture Decisions](#architecture-decisions) for the reasoning behind running this on free infrastructure.
+
 ### Production debugging highlights
 Real issues encountered and resolved during deployment — not theoretical:
 - Diagnosed a config file shadowing bug where Maven's actual config path (`src/main/resources/`) differed from a decoy root-level file, causing silent schema failures in production
